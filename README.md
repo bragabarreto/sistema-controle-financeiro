@@ -5,7 +5,7 @@ Um sistema completo de gestão financeira pessoal com processamento inteligente 
 ## 🌐 **APLICAÇÃO ONLINE**
 
 ### 🚀 **Site Publicado**
-- **URL Principal**: https://sistema-controle-financeiro.manus.im *(em processo de publicação)*
+- **URL Principal**: https://bragabarreto.github.io/sistema-controle-financeiro/
 - **Repositório GitHub**: https://github.com/bragabarreto/sistema-controle-financeiro
 - **Status**: ✅ Deploy realizado com sucesso
 

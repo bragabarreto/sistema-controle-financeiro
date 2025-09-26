@@ -1,14 +1,502 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Controle Financeiro</title>
-    <script type="module" crossorigin src="./assets/index-CW40WIv5.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-DCJKplCs.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .sidebar-item:hover {
+            background-color: #f3f4f6;
+        }
+        .sidebar-item.active {
+            background-color: #2563eb;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md mx-4">
+            <div class="text-center mb-8">
+                <div class="mx-auto h-16 w-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mb-4">
+                    <span class="text-white text-2xl">🔒</span>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900">Sistema Financeiro</h2>
+                <p class="text-gray-600 mt-2">Acesse sua conta para continuar</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Usuário</label>
+                    <input id="username" type="text" required 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           placeholder="Digite seu usuário">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
+                    <input id="password" type="password" required 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           placeholder="Digite sua senha">
+                </div>
+                
+                <div id="errorMessage" class="hidden bg-red-50 border border-red-200 rounded-lg p-3">
+                    <p class="text-sm text-red-700">Usuário ou senha incorretos</p>
+                </div>
+                
+                <button type="submit" id="loginBtn" 
+                        class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 transition-all">
+                    Entrar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="hidden min-h-screen flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white shadow-lg">
+            <div class="p-6 border-b">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white text-lg">💰</span>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">FinanceControl</h1>
+                        <p class="text-sm text-gray-500">Sistema Financeiro</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="p-4">
+                <div class="space-y-2">
+                    <button onclick="showPage('dashboard')" class="sidebar-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors active">
+                        <span class="text-xl">🏠</span>
+                        <div>
+                            <div class="font-medium">Dashboard</div>
+                            <div class="text-xs opacity-75">Visão geral das finanças</div>
+                        </div>
+                    </button>
+                    
+                    <button onclick="showPage('transacoes')" class="sidebar-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors">
+                        <span class="text-xl">💳</span>
+                        <div>
+                            <div class="font-medium">Transações</div>
+                            <div class="text-xs opacity-75">Gastos e receitas</div>
+                        </div>
+                    </button>
+                    
+                    <button onclick="showPage('configuracoes')" class="sidebar-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors">
+                        <span class="text-xl">⚙️</span>
+                        <div>
+                            <div class="font-medium">Configurações</div>
+                            <div class="text-xs opacity-75">Backup e configurações</div>
+                        </div>
+                    </button>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1">
+            <!-- Header -->
+            <header class="bg-white shadow-sm border-b px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <h2 id="pageTitle" class="text-2xl font-bold text-gray-900">Dashboard</h2>
+                    <button onclick="logout()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                        Sair
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="p-6">
+                <!-- Dashboard Page -->
+                <div id="dashboardPage" class="page-content">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Receitas</p>
+                                    <p class="text-2xl font-bold text-green-600" id="totalReceitas">R$ 0,00</p>
+                                </div>
+                                <span class="text-3xl">📈</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Gastos</p>
+                                    <p class="text-2xl font-bold text-red-600" id="totalGastos">R$ 0,00</p>
+                                </div>
+                                <span class="text-3xl">📉</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Saldo</p>
+                                    <p class="text-2xl font-bold text-blue-600" id="saldo">R$ 0,00</p>
+                                </div>
+                                <span class="text-3xl">💰</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-gray-600">Transações</p>
+                                    <p class="text-2xl font-bold text-gray-900" id="totalTransacoes">0</p>
+                                </div>
+                                <span class="text-3xl">📊</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold mb-4">Transações Recentes</h3>
+                        <div id="transacoesRecentes" class="space-y-3">
+                            <p class="text-gray-500 text-center py-8">Nenhuma transação encontrada. Adicione transações na aba "Transações".</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transações Page -->
+                <div id="transacoesPage" class="page-content hidden">
+                    <div class="mb-6">
+                        <button onclick="showAddTransactionModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            + Nova Transação
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="p-6 border-b">
+                            <h3 class="text-lg font-semibold">Histórico de Transações</h3>
+                        </div>
+                        <div class="p-6">
+                            <div id="transacoesList" class="space-y-3">
+                                <p class="text-gray-500 text-center py-8">Nenhuma transação encontrada.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configurações Page -->
+                <div id="configuracoesPage" class="page-content hidden">
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold mb-4">💾 Backup Local</h3>
+                            <div class="space-y-4">
+                                <button onclick="exportData()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                    📥 Exportar Dados
+                                </button>
+                                <input type="file" id="importFile" accept=".json" onchange="importData()" class="hidden">
+                                <button onclick="document.getElementById('importFile').click()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    📤 Importar Dados
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-semibold mb-4">📊 Estatísticas</h3>
+                            <div id="estatisticas" class="grid grid-cols-2 gap-4">
+                                <!-- Estatísticas serão carregadas aqui -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Transaction Modal -->
+    <div id="addTransactionModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 class="text-lg font-semibold mb-4">Nova Transação</h3>
+            <form id="transactionForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+                    <select id="transactionType" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <option value="receita">Receita</option>
+                        <option value="gasto">Gasto</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+                    <input id="transactionDesc" type="text" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Valor</label>
+                    <input id="transactionValue" type="number" step="0.01" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Data</label>
+                    <input id="transactionDate" type="date" required class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                </div>
+                
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Salvar
+                    </button>
+                    <button type="button" onclick="hideAddTransactionModal()" class="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data Storage
+        let transactions = JSON.parse(localStorage.getItem('financial-transactions') || '[]');
+        let isAuthenticated = localStorage.getItem('financial-auth') === 'true';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            if (isAuthenticated) {
+                showMainApp();
+            }
+            
+            // Set today's date as default
+            document.getElementById('transactionDate').value = new Date().toISOString().split('T')[0];
+        });
+
+        // Authentication
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'bragabarreto' && password === 'Mimilulu1719#') {
+                localStorage.setItem('financial-auth', 'true');
+                showMainApp();
+            } else {
+                document.getElementById('errorMessage').classList.remove('hidden');
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('financial-auth');
+            document.getElementById('loginModal').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+        }
+
+        function showMainApp() {
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            updateDashboard();
+        }
+
+        // Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            // Remove active class from all sidebar items
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId + 'Page').classList.remove('hidden');
+            
+            // Update page title
+            const titles = {
+                'dashboard': 'Dashboard',
+                'transacoes': 'Transações', 
+                'configuracoes': 'Configurações'
+            };
+            document.getElementById('pageTitle').textContent = titles[pageId];
+            
+            // Add active class to clicked item
+            event.target.closest('.sidebar-item').classList.add('active');
+            
+            // Update page content
+            if (pageId === 'dashboard') {
+                updateDashboard();
+            } else if (pageId === 'transacoes') {
+                updateTransactionsList();
+            } else if (pageId === 'configuracoes') {
+                updateStatistics();
+            }
+        }
+
+        // Dashboard Functions
+        function updateDashboard() {
+            const receitas = transactions.filter(t => t.type === 'receita').reduce((sum, t) => sum + t.value, 0);
+            const gastos = transactions.filter(t => t.type === 'gasto').reduce((sum, t) => sum + t.value, 0);
+            const saldo = receitas - gastos;
+
+            document.getElementById('totalReceitas').textContent = formatCurrency(receitas);
+            document.getElementById('totalGastos').textContent = formatCurrency(gastos);
+            document.getElementById('saldo').textContent = formatCurrency(saldo);
+            document.getElementById('totalTransacoes').textContent = transactions.length;
+
+            // Recent transactions
+            const recent = transactions.slice(-5).reverse();
+            const recentHtml = recent.length > 0 ? 
+                recent.map(t => `
+                    <div class="flex justify-between items-center p-3 border rounded-lg">
+                        <div>
+                            <p class="font-medium">${t.description}</p>
+                            <p class="text-sm text-gray-500">${formatDate(t.date)}</p>
+                        </div>
+                        <p class="font-semibold ${t.type === 'receita' ? 'text-green-600' : 'text-red-600'}">
+                            ${t.type === 'receita' ? '+' : '-'}${formatCurrency(Math.abs(t.value))}
+                        </p>
+                    </div>
+                `).join('') :
+                '<p class="text-gray-500 text-center py-8">Nenhuma transação encontrada.</p>';
+            
+            document.getElementById('transacoesRecentes').innerHTML = recentHtml;
+        }
+
+        // Transaction Functions
+        function showAddTransactionModal() {
+            document.getElementById('addTransactionModal').classList.remove('hidden');
+        }
+
+        function hideAddTransactionModal() {
+            document.getElementById('addTransactionModal').classList.add('hidden');
+            document.getElementById('transactionForm').reset();
+            document.getElementById('transactionDate').value = new Date().toISOString().split('T')[0];
+        }
+
+        document.getElementById('transactionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const transaction = {
+                id: Date.now(),
+                type: document.getElementById('transactionType').value,
+                description: document.getElementById('transactionDesc').value,
+                value: parseFloat(document.getElementById('transactionValue').value),
+                date: document.getElementById('transactionDate').value
+            };
+            
+            transactions.push(transaction);
+            localStorage.setItem('financial-transactions', JSON.stringify(transactions));
+            
+            hideAddTransactionModal();
+            updateDashboard();
+            updateTransactionsList();
+        });
+
+        function updateTransactionsList() {
+            const listHtml = transactions.length > 0 ?
+                transactions.slice().reverse().map(t => `
+                    <div class="flex justify-between items-center p-3 border rounded-lg">
+                        <div>
+                            <p class="font-medium">${t.description}</p>
+                            <p class="text-sm text-gray-500">${t.type} • ${formatDate(t.date)}</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <p class="font-semibold ${t.type === 'receita' ? 'text-green-600' : 'text-red-600'}">
+                                ${formatCurrency(t.value)}
+                            </p>
+                            <button onclick="deleteTransaction(${t.id})" class="text-red-600 hover:text-red-700">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                `).join('') :
+                '<p class="text-gray-500 text-center py-8">Nenhuma transação encontrada.</p>';
+            
+            document.getElementById('transacoesList').innerHTML = listHtml;
+        }
+
+        function deleteTransaction(id) {
+            if (confirm('Tem certeza que deseja excluir esta transação?')) {
+                transactions = transactions.filter(t => t.id !== id);
+                localStorage.setItem('financial-transactions', JSON.stringify(transactions));
+                updateDashboard();
+                updateTransactionsList();
+            }
+        }
+
+        // Configuration Functions
+        function updateStatistics() {
+            const receitas = transactions.filter(t => t.type === 'receita').reduce((sum, t) => sum + t.value, 0);
+            const gastos = transactions.filter(t => t.type === 'gasto').reduce((sum, t) => sum + t.value, 0);
+            
+            document.getElementById('estatisticas').innerHTML = `
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-green-600">${formatCurrency(receitas)}</div>
+                    <div class="text-sm text-gray-600">Total Receitas</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-red-600">${formatCurrency(gastos)}</div>
+                    <div class="text-sm text-gray-600">Total Gastos</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-blue-600">${formatCurrency(receitas - gastos)}</div>
+                    <div class="text-sm text-gray-600">Saldo</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900">${transactions.length}</div>
+                    <div class="text-sm text-gray-600">Transações</div>
+                </div>
+            `;
+        }
+
+        function exportData() {
+            const data = {
+                transactions,
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `financial-data-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData() {
+            const file = document.getElementById('importFile').files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.transactions && Array.isArray(data.transactions)) {
+                        transactions = data.transactions;
+                        localStorage.setItem('financial-transactions', JSON.stringify(transactions));
+                        updateDashboard();
+                        updateTransactionsList();
+                        alert('Dados importados com sucesso!');
+                    } else {
+                        alert('Formato de arquivo inválido!');
+                    }
+                } catch (error) {
+                    alert('Erro ao importar dados!');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Utility Functions
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value);
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString + 'T00:00:00').toLocaleDateString('pt-BR');
+        }
+    </script>
+</body>
 </html>
