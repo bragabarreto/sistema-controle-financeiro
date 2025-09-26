@@ -1,8 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 import logging
 import sys
+import os
 from .core.config import settings
 from .api.v1.api import api_router
 
@@ -136,6 +138,11 @@ async def startup_event():
 async def shutdown_event():
     """Executado no encerramento da aplicação"""
     logger.info(f"🛑 Encerrando {settings.APP_NAME}")
+
+# Servir arquivos estáticos do frontend (deve ser o último mount)
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(static_dir):
+    app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
