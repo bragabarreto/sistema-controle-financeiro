@@ -11,4 +11,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  base: '/sistema-controle-financeiro/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+  }
 })
