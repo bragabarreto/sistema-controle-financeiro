@@ -24,13 +24,19 @@ A aplicação possui **sistema de autenticação** para proteger informações f
 - **Usuário**: `bragabarreto`
 - **Senha**: `Mimilulu1719#`
 
-### 📱 **Funcionalidades**
+### 📱 **Funcionalidades Completas**
 A aplicação está **100% funcional** e inclui:
-- **Sistema de Login**: Autenticação segura
-- **Interface moderna**: Design responsivo e profissional
-- **Dashboard interativo**: Gráficos e métricas financeiras
-- **Processamento IA**: Análise de documentos financeiros
-- **Gestão completa**: Controle total das finanças pessoais
+- **Sistema de Login**: Autenticação segura com persistência de sessão
+- **Interface moderna**: Design responsivo com Tailwind CSS
+- **Dashboard interativo**: Gráficos dinâmicos e métricas em tempo real
+- **Processamento IA**: Análise de documentos via OpenAI, Anthropic e Google Gemini
+- **Categorização inteligente**: 14 categorias de gastos e 12 de receitas pré-definidas
+- **Contas bancárias**: Gerenciamento de múltiplas contas e cartões
+- **Investimentos**: Controle de aplicações e metas financeiras
+- **Parcelamentos**: Sistema completo de controle de parcelas
+- **Gastos recorrentes**: Automação de lançamentos periódicos
+- **Backup/restore**: Exportação e importação de dados
+- **Relatórios avançados**: Gráficos e análises detalhadas
 
 ## 🚀 Funcionalidades
 
