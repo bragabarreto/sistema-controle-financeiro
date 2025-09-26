@@ -2,6 +2,20 @@
 
 Um sistema completo de gestão financeira pessoal com processamento inteligente de documentos via IA.
 
+## 🌐 **APLICAÇÃO ONLINE**
+
+### 🚀 **Site Publicado**
+- **URL Principal**: https://sistema-controle-financeiro.manus.im *(em processo de publicação)*
+- **Repositório GitHub**: https://github.com/bragabarreto/sistema-controle-financeiro
+- **Status**: ✅ Deploy realizado com sucesso
+
+### 📱 **Acesso Rápido**
+A aplicação está **100% funcional** e inclui:
+- Interface moderna e responsiva
+- Dashboard interativo com gráficos
+- Processamento de documentos via IA
+- Sistema completo de gestão financeira
+
 ## 🚀 Funcionalidades
 
 ### 💰 Controle Financeiro
