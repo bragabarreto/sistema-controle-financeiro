@@ -17,12 +17,20 @@ Um sistema completo de gestão financeira pessoal com processamento inteligente 
 4. Clique em "Save"
 5. O site estará disponível em: https://bragabarreto.github.io/sistema-controle-financeiro/
 
-### 📱 **Acesso Rápido**
+### 🔐 **Acesso Seguro**
+A aplicação possui **sistema de autenticação** para proteger informações financeiras:
+
+**Credenciais de Acesso:**
+- **Usuário**: `bragabarreto`
+- **Senha**: `Mimilulu1719#`
+
+### 📱 **Funcionalidades**
 A aplicação está **100% funcional** e inclui:
-- Interface moderna e responsiva
-- Dashboard interativo com gráficos
-- Processamento de documentos via IA
-- Sistema completo de gestão financeira
+- **Sistema de Login**: Autenticação segura
+- **Interface moderna**: Design responsivo e profissional
+- **Dashboard interativo**: Gráficos e métricas financeiras
+- **Processamento IA**: Análise de documentos financeiros
+- **Gestão completa**: Controle total das finanças pessoais
 
 ## 🚀 Funcionalidades
 

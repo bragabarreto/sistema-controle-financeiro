@@ -59,7 +59,7 @@ const menuItems = [
   }
 ]
 
-export default function Layout({ children, currentPath = '/' }) {
+export default function Layout({ children, currentPath = '/', onNavigate }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const toggleSidebar = () => {
@@ -119,8 +119,9 @@ export default function Layout({ children, currentPath = '/' }) {
                       : "text-muted-foreground hover:text-foreground hover:bg-accent"
                   )}
                   onClick={() => {
-                    // Aqui você implementaria a navegação
-                    console.log('Navegar para:', item.path)
+                    if (onNavigate) {
+                      onNavigate(item.path)
+                    }
                     setSidebarOpen(false)
                   }}
                 >
