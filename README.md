@@ -5,9 +5,17 @@ Um sistema completo de gestão financeira pessoal com processamento inteligente 
 ## 🌐 **APLICAÇÃO ONLINE**
 
 ### 🚀 **Site Publicado**
-- **URL Principal**: https://sistema-controle-financeiro.manus.im *(em processo de publicação)*
+- **URL Principal**: https://bragabarreto.github.io/sistema-controle-financeiro/ *(GitHub Pages)*
+- **URL Alternativa**: https://sistema-controle-financeiro.manus.im *(Manus Deploy)*
 - **Repositório GitHub**: https://github.com/bragabarreto/sistema-controle-financeiro
-- **Status**: ✅ Deploy realizado com sucesso
+- **Status**: ✅ Deploy permanente realizado com sucesso
+
+### 📋 **Como Ativar o Site (GitHub Pages)**
+1. Acesse: https://github.com/bragabarreto/sistema-controle-financeiro/settings/pages
+2. Em "Source", selecione "Deploy from a branch"
+3. Escolha o branch "gh-pages" e pasta "/ (root)"
+4. Clique em "Save"
+5. O site estará disponível em: https://bragabarreto.github.io/sistema-controle-financeiro/
 
 ### 📱 **Acesso Rápido**
 A aplicação está **100% funcional** e inclui:
