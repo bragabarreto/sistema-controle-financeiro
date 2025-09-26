@@ -50,7 +50,7 @@ async def global_exception_handler(request, exc):
     )
 
 # Endpoints de saúde e informações
-@app.get("/")
+@app.get("/api")
 async def root():
     """Endpoint raiz com informações da API"""
     return {
