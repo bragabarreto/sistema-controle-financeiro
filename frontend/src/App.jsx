@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import './App.css'
-import Layout from './components/layout/Layout'
+import LayoutSimple from './components/layout/LayoutSimple'
 import DashboardSimple from './components/DashboardSimple'
 import Login from './components/Login'
 import Header from './components/Header'
@@ -75,9 +75,9 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header user={user} onLogout={logout} />
-      <Layout currentPath={currentPage} onNavigate={setCurrentPage}>
+      <LayoutSimple currentPath={currentPage} onNavigate={setCurrentPage}>
         {renderPage()}
-      </Layout>
+      </LayoutSimple>
     </div>
   )
 }
