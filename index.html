@@ -89,7 +89,15 @@
                         <span class="text-xl">🏦</span>
                         <div>
                             <div class="font-medium">Contas</div>
-                            <div class="text-xs opacity-75">Bancos e cartões</div>
+                            <div class="text-xs opacity-75">Contas bancárias</div>
+                        </div>
+                    </button>
+                    
+                    <button onclick="showPage('cartoes')" class="sidebar-item w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-colors">
+                        <span class="text-xl">💳</span>
+                        <div>
+                            <div class="font-medium">Cartões</div>
+                            <div class="text-xs opacity-75">Cartões de crédito</div>
                         </div>
                     </button>
                     
@@ -262,22 +270,45 @@
                     </div>
                 </div>
 
+                <!-- Cartões Page -->
+                <div id="cartoesPage" class="page-content hidden">
+                    <div class="mb-6">
+                        <button onclick="showAddCardModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            + Novo Cartão
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="cartoesList">
+                        <!-- Cartões serão carregados aqui -->
+                    </div>
+
+                    <div class="mt-8 bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold mb-4">Faturas Recentes</h3>
+                        <div id="faturasList" class="space-y-3">
+                            <p class="text-gray-500 text-center py-8">Nenhuma fatura encontrada.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Investimentos Page -->
                 <div id="investimentosPage" class="page-content hidden">
                     <div class="mb-6 flex gap-4">
                         <button onclick="showAddInvestmentModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                             + Novo Investimento
                         </button>
-                        <button onclick="showAddGoalModal()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        <button onclick="showAddInvestmentAccountModal()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            🏦 Nova Conta de Investimento
+                        </button>
+                        <button onclick="showAddGoalModal()" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
                             🎯 Nova Meta
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                         <div class="bg-white rounded-lg shadow p-6">
-                            <h3 class="text-lg font-semibold mb-4">Carteira de Investimentos</h3>
-                            <div id="investmentsList" class="space-y-3">
-                                <p class="text-gray-500 text-center py-8">Nenhum investimento encontrado.</p>
+                            <h3 class="text-lg font-semibold mb-4">Contas de Investimento</h3>
+                            <div id="investmentAccountsList" class="space-y-3">
+                                <p class="text-gray-500 text-center py-8">Nenhuma conta de investimento encontrada.</p>
                             </div>
                         </div>
                         
@@ -286,6 +317,13 @@
                             <div id="goalsList" class="space-y-3">
                                 <p class="text-gray-500 text-center py-8">Nenhuma meta encontrada.</p>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <h3 class="text-lg font-semibold mb-4">Carteira de Investimentos</h3>
+                        <div id="investmentsList" class="space-y-3">
+                            <p class="text-gray-500 text-center py-8">Nenhum investimento encontrado.</p>
                         </div>
                     </div>
                 </div>
@@ -333,7 +371,7 @@
                         </div>
                     </div>
 
-                    <!-- Novos campos para processamento de IA -->
+                    <!-- Campos para processamento de IA -->
                     <div class="bg-white rounded-lg shadow p-6 mb-8">
                         <h3 class="text-lg font-semibold mb-4">Processamento de SMS e Documentos</h3>
                         
@@ -631,12 +669,308 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal de Prévia de Transação -->
+        <div id="transactionPreviewModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal">
+            <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl mx-4">
+                <h3 class="text-lg font-semibold mb-4">Prévia da Transação</h3>
+                <div class="space-y-4">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-blue-700">A IA identificou os seguintes dados. Por favor, verifique e ajuste se necessário.</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Descrição da Transação</label>
+                        <input id="previewDescription" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Valor</label>
+                            <input id="previewValue" type="number" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Data</label>
+                            <input id="previewDate" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Transação</label>
+                        <select id="previewType" class="w-full px-3 py-2 border border-gray-300 rounded-lg" onchange="updatePreviewFields()">
+                            <option value="receita">Receita</option>
+                            <option value="despesa">Despesa</option>
+                            <option value="investimento">Investimento</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Campos específicos para Receita -->
+                    <div id="previewReceitaFields" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Origem do Recurso</label>
+                            <input id="previewOrigemReceita" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Conta de Destino</label>
+                            <select id="previewContaDestinoReceita" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                <!-- Contas serão carregadas aqui -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+                            <select id="previewCategoriaReceita" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                <!-- Categorias serão carregadas aqui -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Campos específicos para Despesa -->
+                    <div id="previewDespesaFields" class="space-y-4 hidden">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Forma de Pagamento</label>
+                            <select id="previewFormaPagamento" class="w-full px-3 py-2 border border-gray-300 rounded-lg" onchange="updateFormaPagamentoFields()">
+                                <option value="credito">Cartão de Crédito</option>
+                                <option value="debito">Cartão de Débito</option>
+                                <option value="pix">PIX</option>
+                                <option value="transferencia">Transferência Bancária</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Campos para Cartão de Crédito -->
+                        <div id="previewCreditoFields">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Cartão de Crédito</label>
+                            <select id="previewCartaoCredito" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                <!-- Cartões serão carregados aqui -->
+                            </select>
+                        </div>
+                        
+                        <!-- Campos para Débito/PIX/Transferência -->
+                        <div id="previewDebitoPixTransfFields" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Conta de Origem</label>
+                            <select id="previewContaOrigem" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                <!-- Contas serão carregadas aqui -->
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+                            <select id="previewCategoriaDespesa" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                <!-- Categorias serão carregadas aqui -->
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Campos específicos para Investimento -->
+                    <div id="previewInvestimentoFields" class="space-y-4 hidden">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Operação</label>
+                            <select id="previewTipoInvestimento" class="w-full px-3 py-2 border border-gray-300 rounded-lg" onchange="updateInvestimentoFields()">
+                                <option value="aplicacao">Aplicação</option>
+                                <option value="resgate">Resgate</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Campos para Aplicação -->
+                        <div id="previewAplicacaoFields">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Conta de Origem</label>
+                                <select id="previewContaOrigemInvestimento" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                    <!-- Contas serão carregadas aqui -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Investimento de Destino</label>
+                                <select id="previewInvestimentoDestino" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                    <!-- Investimentos serão carregados aqui -->
+                                </select>
+                            </div>
+                            <div class="flex items-center mt-2">
+                                <input id="previewNovoInvestimento" type="checkbox" class="mr-2" onchange="toggleNovoInvestimentoFields()">
+                                <label class="text-sm text-gray-700">Cadastrar novo investimento</label>
+                            </div>
+                            <div id="previewNovoInvestimentoFields" class="mt-3 space-y-3 hidden">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nome do Investimento</label>
+                                    <input id="previewNovoInvestimentoNome" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Investimento</label>
+                                    <select id="previewNovoInvestimentoTipo" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                        <option value="cdb">CDB</option>
+                                        <option value="lci">LCI</option>
+                                        <option value="lca">LCA</option>
+                                        <option value="acoes">Ações</option>
+                                        <option value="cripto">Criptomoedas</option>
+                                        <option value="fundos">Fundos de Investimento</option>
+                                        <option value="outros">Outros</option>
+                                    </select>
+                                </div>
+                                <div id="previewSubtipoContainer" class="hidden">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Subtipo</label>
+                                    <input id="previewNovoInvestimentoSubtipo" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Instituição Financeira</label>
+                                    <input id="previewNovoInvestimentoInstituicao" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Taxa de Rendimento (%)</label>
+                                    <input id="previewNovoInvestimentoTaxa" type="number" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Campos para Resgate -->
+                        <div id="previewResgateFields" class="hidden">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Investimento de Origem</label>
+                                <select id="previewInvestimentoOrigem" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                    <!-- Investimentos serão carregados aqui -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Conta de Destino</label>
+                                <select id="previewContaDestinoResgate" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                                    <!-- Contas serão carregadas aqui -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeTransactionPreviewModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="button" onclick="saveTransaction()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Salvar Transação
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Adicionar Conta -->
+        <div id="addAccountModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal">
+            <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                <h3 class="text-lg font-semibold mb-4">Adicionar Nova Conta</h3>
+                <form id="addAccountForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome da Conta</label>
+                        <input id="accountName" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Ex: Conta Corrente Banco X">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Conta</label>
+                        <select id="accountType" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="corrente">Conta Corrente</option>
+                            <option value="poupanca">Conta Poupança</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Instituição Financeira</label>
+                        <input id="accountBank" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Ex: Banco do Brasil">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Saldo Inicial</label>
+                        <input id="accountBalance" type="number" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="0.00">
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeAddAccountModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Adicionar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal de Adicionar Cartão -->
+        <div id="addCardModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal">
+            <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                <h3 class="text-lg font-semibold mb-4">Adicionar Novo Cartão</h3>
+                <form id="addCardForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome do Cartão</label>
+                        <input id="cardName" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Ex: Cartão Nubank">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Instituição Financeira</label>
+                        <input id="cardBank" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Ex: Nubank">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Bandeira</label>
+                        <select id="cardFlag" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="visa">Visa</option>
+                            <option value="mastercard">Mastercard</option>
+                            <option value="elo">Elo</option>
+                            <option value="amex">American Express</option>
+                            <option value="hipercard">Hipercard</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Limite</label>
+                        <input id="cardLimit" type="number" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="0.00">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Dia de Vencimento</label>
+                            <input id="cardDueDay" type="number" min="1" max="31" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="10">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Dia de Fechamento</label>
+                            <input id="cardClosingDay" type="number" min="1" max="31" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="3">
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeAddCardModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Adicionar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal de Adicionar Conta de Investimento -->
+        <div id="addInvestmentAccountModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal">
+            <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                <h3 class="text-lg font-semibold mb-4">Adicionar Conta de Investimento</h3>
+                <form id="addInvestmentAccountForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome da Conta</label>
+                        <input id="investmentAccountName" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Ex: Conta Investimento XP">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Instituição Financeira</label>
+                        <input id="investmentAccountBank" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Ex: XP Investimentos">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Saldo Inicial</label>
+                        <input id="investmentAccountBalance" type="number" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="0.00">
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeAddInvestmentAccountModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Adicionar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script>
         // Dados globais
         let transactions = JSON.parse(localStorage.getItem('financial-transactions') || '[]');
         let accounts = JSON.parse(localStorage.getItem('financial-accounts') || '[]');
+        let cards = JSON.parse(localStorage.getItem('financial-cards') || '[]');
+        let investmentAccounts = JSON.parse(localStorage.getItem('financial-investment-accounts') || '[]');
         let investments = JSON.parse(localStorage.getItem('financial-investments') || '[]');
         let goals = JSON.parse(localStorage.getItem('financial-goals') || '[]');
         let recurrentTransactions = JSON.parse(localStorage.getItem('financial-recurrent') || '[]');
@@ -645,6 +979,7 @@
         let apiKeys = JSON.parse(localStorage.getItem('financial-api-keys') || '{}');
         let isAuthenticated = localStorage.getItem('financial-auth') === 'true';
         let currentUploadType = '';
+        let currentPreviewData = {};
 
         // Categorias pré-definidas
         const categories = {
@@ -684,6 +1019,17 @@
                 { name: 'Prêmios', color: '#ec4899', icon: '🏆' },
                 { name: 'Outros', color: '#6b7280', icon: '📦' }
             ]
+        };
+
+        // Tipos de investimento
+        const investmentTypes = {
+            cdb: { name: 'CDB', hasSubtype: false },
+            lci: { name: 'LCI', hasSubtype: false },
+            lca: { name: 'LCA', hasSubtype: false },
+            acoes: { name: 'Ações', hasSubtype: true, subtypeLabel: 'Ticker' },
+            cripto: { name: 'Criptomoedas', hasSubtype: true, subtypeLabel: 'Moeda' },
+            fundos: { name: 'Fundos de Investimento', hasSubtype: true, subtypeLabel: 'Nome do Fundo' },
+            outros: { name: 'Outros', hasSubtype: true, subtypeLabel: 'Especificação' }
         };
 
         // Inicialização
@@ -738,6 +1084,7 @@
                 'dashboard': 'Dashboard',
                 'transacoes': 'Transações',
                 'contas': 'Contas',
+                'cartoes': 'Cartões de Crédito',
                 'investimentos': 'Investimentos',
                 'processamento': 'Processamento IA',
                 'relatorios': 'Relatórios',
@@ -758,7 +1105,12 @@
                 case 'contas':
                     updateAccountsList();
                     break;
+                case 'cartoes':
+                    updateCardsList();
+                    updateFaturasList();
+                    break;
                 case 'investimentos':
+                    updateInvestmentAccountsList();
                     updateInvestmentsList();
                     updateGoalsList();
                     break;
@@ -1028,8 +1380,40 @@
                 return;
             }
             
-            // Simulação de processamento
-            alert(`Processando ${currentUploadType} com o provedor ${provider}. Arquivo: ${file.name}`);
+            // Simulação de processamento de IA
+            console.log(`Processando ${currentUploadType} com o provedor ${provider}. Arquivo: ${file.name}`);
+            
+            // Dados simulados que seriam retornados pela IA
+            let previewData = {};
+            
+            if (currentUploadType === 'contracheque') {
+                previewData = {
+                    description: 'Salário Mensal',
+                    value: 5000.00,
+                    date: new Date().toISOString().split('T')[0],
+                    type: 'receita',
+                    origem: 'Empresa XYZ',
+                    category: 'Salário'
+                };
+            } else if (currentUploadType === 'extrato') {
+                previewData = {
+                    description: 'Pagamento Conta de Luz',
+                    value: 150.00,
+                    date: new Date().toISOString().split('T')[0],
+                    type: 'despesa',
+                    formaPagamento: 'debito',
+                    category: 'Luz'
+                };
+            } else if (currentUploadType === 'fatura') {
+                previewData = {
+                    description: 'Compra Supermercado',
+                    value: 350.00,
+                    date: new Date().toISOString().split('T')[0],
+                    type: 'despesa',
+                    formaPagamento: 'credito',
+                    category: 'Alimentação'
+                };
+            }
             
             // Adicionar ao histórico de processamentos
             const newProcessing = {
@@ -1046,6 +1430,9 @@
             
             closeUploadModal();
             updateProcessingHistory();
+            
+            // Mostrar prévia da transação
+            showTransactionPreview(previewData);
         }
 
         function processSMS() {
@@ -1056,8 +1443,18 @@
                 return;
             }
             
-            // Simulação de processamento
-            alert(`Processando SMS: ${smsText}`);
+            // Simulação de processamento de IA
+            console.log(`Processando SMS: ${smsText}`);
+            
+            // Dados simulados que seriam retornados pela IA
+            const previewData = {
+                description: 'Compra Mercado Livre',
+                value: 59.90,
+                date: new Date().toISOString().split('T')[0],
+                type: 'despesa',
+                formaPagamento: 'credito',
+                category: 'Outros'
+            };
             
             // Adicionar ao histórico de processamentos
             const newProcessing = {
@@ -1074,6 +1471,9 @@
             
             document.getElementById('smsText').value = '';
             updateProcessingHistory();
+            
+            // Mostrar prévia da transação
+            showTransactionPreview(previewData);
         }
 
         function processOCR(type) {
@@ -1085,8 +1485,31 @@
                 return;
             }
             
-            // Simulação de processamento
-            alert(`Processando OCR para ${type}. Arquivo: ${file.name}`);
+            // Simulação de processamento de IA
+            console.log(`Processando OCR para ${type}. Arquivo: ${file.name}`);
+            
+            // Dados simulados que seriam retornados pela IA
+            let previewData = {};
+            
+            if (type === 'transaction') {
+                previewData = {
+                    description: 'Transferência PIX',
+                    value: 120.00,
+                    date: new Date().toISOString().split('T')[0],
+                    type: 'despesa',
+                    formaPagamento: 'pix',
+                    category: 'Outros'
+                };
+            } else {
+                previewData = {
+                    description: 'Rendimento Investimento',
+                    value: 250.00,
+                    date: new Date().toISOString().split('T')[0],
+                    type: 'receita',
+                    origem: 'Rendimentos',
+                    category: 'Investimentos'
+                };
+            }
             
             // Adicionar ao histórico de processamentos
             const newProcessing = {
@@ -1103,6 +1526,9 @@
             
             document.getElementById(fileInput).value = '';
             updateProcessingHistory();
+            
+            // Mostrar prévia da transação
+            showTransactionPreview(previewData);
         }
 
         function processDocument() {
@@ -1114,8 +1540,31 @@
                 return;
             }
             
-            // Simulação de processamento
-            alert(`Processando documento de ${type}. Arquivo: ${file.name}`);
+            // Simulação de processamento de IA
+            console.log(`Processando documento de ${type}. Arquivo: ${file.name}`);
+            
+            // Dados simulados que seriam retornados pela IA
+            let previewData = {};
+            
+            if (type === 'income') {
+                previewData = {
+                    description: 'Pagamento Freelance',
+                    value: 800.00,
+                    date: new Date().toISOString().split('T')[0],
+                    type: 'receita',
+                    origem: 'Freelance',
+                    category: 'Freelance'
+                };
+            } else {
+                previewData = {
+                    description: 'Aplicação em CDB',
+                    value: 1000.00,
+                    date: new Date().toISOString().split('T')[0],
+                    type: 'investimento',
+                    tipoInvestimento: 'aplicacao',
+                    category: 'CDB'
+                };
+            }
             
             // Adicionar ao histórico de processamentos
             const newProcessing = {
@@ -1132,6 +1581,9 @@
             
             document.getElementById('incomeInvestmentFile').value = '';
             updateProcessingHistory();
+            
+            // Mostrar prévia da transação
+            showTransactionPreview(previewData);
         }
 
         function updateProcessingHistory() {
@@ -1151,6 +1603,533 @@
                     <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">${p.status}</span>
                 </div>
             `).join('');
+        }
+
+        // Funções para prévia de transação
+        function showTransactionPreview(data) {
+            currentPreviewData = data;
+            
+            // Preencher campos comuns
+            document.getElementById('previewDescription').value = data.description || '';
+            document.getElementById('previewValue').value = data.value || 0;
+            document.getElementById('previewDate').value = data.date || new Date().toISOString().split('T')[0];
+            document.getElementById('previewType').value = data.type || 'receita';
+            
+            // Preencher campos específicos
+            if (data.type === 'receita') {
+                document.getElementById('previewOrigemReceita').value = data.origem || '';
+                populateAccountsSelect('previewContaDestinoReceita');
+                populateCategoriesSelect('previewCategoriaReceita', 'receitas');
+                if (data.category) {
+                    document.getElementById('previewCategoriaReceita').value = data.category;
+                }
+            } else if (data.type === 'despesa' || data.type === 'gasto') {
+                document.getElementById('previewFormaPagamento').value = data.formaPagamento || 'credito';
+                populateCardsSelect('previewCartaoCredito');
+                populateAccountsSelect('previewContaOrigem');
+                populateCategoriesSelect('previewCategoriaDespesa', data.type === 'despesa' ? 'despesas' : 'gastos');
+                if (data.category) {
+                    document.getElementById('previewCategoriaDespesa').value = data.category;
+                }
+                updateFormaPagamentoFields();
+            } else if (data.type === 'investimento') {
+                document.getElementById('previewTipoInvestimento').value = data.tipoInvestimento || 'aplicacao';
+                populateAccountsSelect('previewContaOrigemInvestimento');
+                populateAccountsSelect('previewContaDestinoResgate');
+                populateInvestmentsSelect('previewInvestimentoDestino');
+                populateInvestmentsSelect('previewInvestimentoOrigem');
+                updateInvestimentoFields();
+            }
+            
+            // Mostrar campos específicos do tipo
+            updatePreviewFields();
+            
+            // Mostrar modal
+            document.getElementById('transactionPreviewModal').classList.remove('hidden');
+        }
+
+        function closeTransactionPreviewModal() {
+            document.getElementById('transactionPreviewModal').classList.add('hidden');
+        }
+
+        function updatePreviewFields() {
+            const type = document.getElementById('previewType').value;
+            
+            // Esconder todos os campos específicos
+            document.getElementById('previewReceitaFields').classList.add('hidden');
+            document.getElementById('previewDespesaFields').classList.add('hidden');
+            document.getElementById('previewInvestimentoFields').classList.add('hidden');
+            
+            // Mostrar campos específicos do tipo selecionado
+            if (type === 'receita') {
+                document.getElementById('previewReceitaFields').classList.remove('hidden');
+            } else if (type === 'despesa') {
+                document.getElementById('previewDespesaFields').classList.remove('hidden');
+            } else if (type === 'investimento') {
+                document.getElementById('previewInvestimentoFields').classList.remove('hidden');
+            }
+        }
+
+        function updateFormaPagamentoFields() {
+            const formaPagamento = document.getElementById('previewFormaPagamento').value;
+            
+            if (formaPagamento === 'credito') {
+                document.getElementById('previewCreditoFields').classList.remove('hidden');
+                document.getElementById('previewDebitoPixTransfFields').classList.add('hidden');
+            } else {
+                document.getElementById('previewCreditoFields').classList.add('hidden');
+                document.getElementById('previewDebitoPixTransfFields').classList.remove('hidden');
+            }
+        }
+
+        function updateInvestimentoFields() {
+            const tipoInvestimento = document.getElementById('previewTipoInvestimento').value;
+            
+            if (tipoInvestimento === 'aplicacao') {
+                document.getElementById('previewAplicacaoFields').classList.remove('hidden');
+                document.getElementById('previewResgateFields').classList.add('hidden');
+            } else {
+                document.getElementById('previewAplicacaoFields').classList.add('hidden');
+                document.getElementById('previewResgateFields').classList.remove('hidden');
+            }
+        }
+
+        function toggleNovoInvestimentoFields() {
+            const isChecked = document.getElementById('previewNovoInvestimento').checked;
+            
+            if (isChecked) {
+                document.getElementById('previewNovoInvestimentoFields').classList.remove('hidden');
+                document.getElementById('previewInvestimentoDestino').disabled = true;
+            } else {
+                document.getElementById('previewNovoInvestimentoFields').classList.add('hidden');
+                document.getElementById('previewInvestimentoDestino').disabled = false;
+            }
+        }
+
+        function populateAccountsSelect(selectId) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">Selecione uma conta</option>';
+            
+            accounts.forEach(account => {
+                const option = document.createElement('option');
+                option.value = account.id;
+                option.textContent = account.name;
+                select.appendChild(option);
+            });
+        }
+
+        function populateCardsSelect(selectId) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">Selecione um cartão</option>';
+            
+            cards.forEach(card => {
+                const option = document.createElement('option');
+                option.value = card.id;
+                option.textContent = card.name;
+                select.appendChild(option);
+            });
+        }
+
+        function populateInvestmentsSelect(selectId) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">Selecione um investimento</option>';
+            
+            investments.forEach(investment => {
+                const option = document.createElement('option');
+                option.value = investment.id;
+                option.textContent = investment.name;
+                select.appendChild(option);
+            });
+        }
+
+        function populateCategoriesSelect(selectId, categoryType) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">Selecione uma categoria</option>';
+            
+            categories[categoryType].forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat.name;
+                option.textContent = cat.name;
+                select.appendChild(option);
+            });
+        }
+
+        function saveTransaction() {
+            const type = document.getElementById('previewType').value;
+            const description = document.getElementById('previewDescription').value;
+            const value = parseFloat(document.getElementById('previewValue').value);
+            const date = document.getElementById('previewDate').value;
+            
+            if (!description || isNaN(value) || value <= 0 || !date) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+            
+            let transaction = {
+                id: Date.now(),
+                description,
+                value,
+                date,
+                type
+            };
+            
+            // Adicionar campos específicos
+            if (type === 'receita') {
+                transaction.origem = document.getElementById('previewOrigemReceita').value;
+                transaction.contaDestino = document.getElementById('previewContaDestinoReceita').value;
+                transaction.category = document.getElementById('previewCategoriaReceita').value;
+            } else if (type === 'despesa') {
+                const formaPagamento = document.getElementById('previewFormaPagamento').value;
+                transaction.formaPagamento = formaPagamento;
+                
+                if (formaPagamento === 'credito') {
+                    transaction.cartaoCredito = document.getElementById('previewCartaoCredito').value;
+                } else {
+                    transaction.contaOrigem = document.getElementById('previewContaOrigem').value;
+                }
+                
+                transaction.category = document.getElementById('previewCategoriaDespesa').value;
+            } else if (type === 'investimento') {
+                const tipoInvestimento = document.getElementById('previewTipoInvestimento').value;
+                transaction.tipoInvestimento = tipoInvestimento;
+                
+                if (tipoInvestimento === 'aplicacao') {
+                    transaction.contaOrigem = document.getElementById('previewContaOrigemInvestimento').value;
+                    
+                    if (document.getElementById('previewNovoInvestimento').checked) {
+                        // Criar novo investimento
+                        const novoInvestimento = {
+                            id: Date.now() + 1,
+                            name: document.getElementById('previewNovoInvestimentoNome').value,
+                            type: document.getElementById('previewNovoInvestimentoTipo').value,
+                            institution: document.getElementById('previewNovoInvestimentoInstituicao').value,
+                            rate: parseFloat(document.getElementById('previewNovoInvestimentoTaxa').value),
+                            initialValue: value,
+                            currentValue: value,
+                            startDate: date
+                        };
+                        
+                        const investmentType = document.getElementById('previewNovoInvestimentoTipo').value;
+                        if (investmentTypes[investmentType].hasSubtype) {
+                            novoInvestimento.subtype = document.getElementById('previewNovoInvestimentoSubtipo').value;
+                        }
+                        
+                        investments.push(novoInvestimento);
+                        localStorage.setItem('financial-investments', JSON.stringify(investments));
+                        
+                        transaction.investimentoDestino = novoInvestimento.id;
+                    } else {
+                        transaction.investimentoDestino = document.getElementById('previewInvestimentoDestino').value;
+                    }
+                } else {
+                    transaction.investimentoOrigem = document.getElementById('previewInvestimentoOrigem').value;
+                    transaction.contaDestino = document.getElementById('previewContaDestinoResgate').value;
+                }
+            }
+            
+            // Adicionar transação
+            transactions.push(transaction);
+            localStorage.setItem('financial-transactions', JSON.stringify(transactions));
+            
+            // Atualizar saldos
+            updateBalances(transaction);
+            
+            // Fechar modal
+            closeTransactionPreviewModal();
+            
+            // Atualizar interface
+            updateDashboard();
+            updateTransactionsList();
+            
+            alert('Transação salva com sucesso!');
+        }
+
+        function updateBalances(transaction) {
+            if (transaction.type === 'receita') {
+                const contaDestino = accounts.find(a => a.id === transaction.contaDestino);
+                if (contaDestino) {
+                    contaDestino.balance += transaction.value;
+                }
+            } else if (transaction.type === 'despesa') {
+                if (transaction.formaPagamento === 'credito') {
+                    const cartao = cards.find(c => c.id === transaction.cartaoCredito);
+                    if (cartao) {
+                        cartao.usedLimit += transaction.value;
+                    }
+                } else {
+                    const contaOrigem = accounts.find(a => a.id === transaction.contaOrigem);
+                    if (contaOrigem) {
+                        contaOrigem.balance -= transaction.value;
+                    }
+                }
+            } else if (transaction.type === 'investimento') {
+                if (transaction.tipoInvestimento === 'aplicacao') {
+                    const contaOrigem = accounts.find(a => a.id === transaction.contaOrigem);
+                    if (contaOrigem) {
+                        contaOrigem.balance -= transaction.value;
+                    }
+                    
+                    const investimento = investments.find(i => i.id === transaction.investimentoDestino);
+                    if (investimento) {
+                        investimento.currentValue += transaction.value;
+                    }
+                } else {
+                    const investimento = investments.find(i => i.id === transaction.investimentoOrigem);
+                    if (investimento) {
+                        investimento.currentValue -= transaction.value;
+                    }
+                    
+                    const contaDestino = accounts.find(a => a.id === transaction.contaDestino);
+                    if (contaDestino) {
+                        contaDestino.balance += transaction.value;
+                    }
+                }
+            }
+            
+            localStorage.setItem('financial-accounts', JSON.stringify(accounts));
+            localStorage.setItem('financial-cards', JSON.stringify(cards));
+            localStorage.setItem('financial-investments', JSON.stringify(investments));
+        }
+
+        // Funções para contas
+        function updateAccountsList() {
+            const contasList = document.getElementById('contasList');
+            
+            if (accounts.length === 0) {
+                contasList.innerHTML = '<div class="col-span-full"><p class="text-gray-500 text-center py-8">Nenhuma conta encontrada.</p></div>';
+                return;
+            }
+            
+            contasList.innerHTML = accounts.map(account => `
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-semibold">${account.name}</h3>
+                            <p class="text-sm text-gray-600">${account.bank}</p>
+                        </div>
+                        <span class="text-2xl">${account.type === 'corrente' ? '🏦' : '💰'}</span>
+                    </div>
+                    <div class="border-t pt-4">
+                        <p class="text-sm text-gray-600">Saldo</p>
+                        <p class="text-xl font-bold ${account.balance >= 0 ? 'text-green-600' : 'text-red-600'}">${formatCurrency(account.balance)}</p>
+                    </div>
+                    <div class="flex justify-end mt-4">
+                        <button onclick="editAccount(${account.id})" class="text-blue-600 hover:text-blue-800 mr-3">Editar</button>
+                        <button onclick="deleteAccount(${account.id})" class="text-red-600 hover:text-red-800">Excluir</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddAccountModal() {
+            document.getElementById('addAccountModal').classList.remove('hidden');
+        }
+
+        function closeAddAccountModal() {
+            document.getElementById('addAccountModal').classList.add('hidden');
+        }
+
+        // Funções para cartões
+        function updateCardsList() {
+            const cartoesList = document.getElementById('cartoesList');
+            
+            if (cards.length === 0) {
+                cartoesList.innerHTML = '<div class="col-span-full"><p class="text-gray-500 text-center py-8">Nenhum cartão encontrado.</p></div>';
+                return;
+            }
+            
+            cartoesList.innerHTML = cards.map(card => `
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-semibold">${card.name}</h3>
+                            <p class="text-sm text-gray-600">${card.bank} • ${card.flag.toUpperCase()}</p>
+                        </div>
+                        <span class="text-2xl">💳</span>
+                    </div>
+                    <div class="border-t pt-4">
+                        <div class="flex justify-between mb-2">
+                            <p class="text-sm text-gray-600">Limite Total</p>
+                            <p class="font-medium">${formatCurrency(card.limit)}</p>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <p class="text-sm text-gray-600">Limite Usado</p>
+                            <p class="font-medium text-red-600">${formatCurrency(card.usedLimit || 0)}</p>
+                        </div>
+                        <div class="flex justify-between">
+                            <p class="text-sm text-gray-600">Limite Disponível</p>
+                            <p class="font-medium text-green-600">${formatCurrency(card.limit - (card.usedLimit || 0))}</p>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4 mt-4">
+                        <div class="flex justify-between">
+                            <p class="text-sm text-gray-600">Vencimento: dia ${card.dueDay}</p>
+                            <p class="text-sm text-gray-600">Fechamento: dia ${card.closingDay}</p>
+                        </div>
+                    </div>
+                    <div class="flex justify-end mt-4">
+                        <button onclick="viewFatura(${card.id})" class="text-blue-600 hover:text-blue-800 mr-3">Ver Fatura</button>
+                        <button onclick="editCard(${card.id})" class="text-blue-600 hover:text-blue-800 mr-3">Editar</button>
+                        <button onclick="deleteCard(${card.id})" class="text-red-600 hover:text-red-800">Excluir</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateFaturasList() {
+            const faturasList = document.getElementById('faturasList');
+            
+            // Simulação de faturas
+            const faturas = [];
+            cards.forEach(card => {
+                const today = new Date();
+                const month = today.getMonth();
+                const year = today.getFullYear();
+                
+                faturas.push({
+                    id: Date.now() + card.id,
+                    cardId: card.id,
+                    cardName: card.name,
+                    month: month,
+                    year: year,
+                    value: card.usedLimit || 0,
+                    status: 'Aberta'
+                });
+                
+                faturas.push({
+                    id: Date.now() + card.id + 1,
+                    cardId: card.id,
+                    cardName: card.name,
+                    month: month - 1 < 0 ? 11 : month - 1,
+                    year: month - 1 < 0 ? year - 1 : year,
+                    value: Math.random() * 1000 + 500,
+                    status: 'Fechada'
+                });
+            });
+            
+            if (faturas.length === 0) {
+                faturasList.innerHTML = '<p class="text-gray-500 text-center py-8">Nenhuma fatura encontrada.</p>';
+                return;
+            }
+            
+            const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            
+            faturasList.innerHTML = faturas.map(fatura => `
+                <div class="flex justify-between items-center p-3 border rounded-lg">
+                    <div>
+                        <p class="font-medium">${fatura.cardName} - ${monthNames[fatura.month]} de ${fatura.year}</p>
+                        <p class="text-sm text-gray-500">Valor: ${formatCurrency(fatura.value)}</p>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="px-2 py-1 ${fatura.status === 'Aberta' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'} rounded-full text-xs font-medium mr-2">${fatura.status}</span>
+                        <button onclick="viewFaturaDetails(${fatura.id})" class="text-blue-600 hover:text-blue-800">Ver</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddCardModal() {
+            document.getElementById('addCardModal').classList.remove('hidden');
+        }
+
+        function closeAddCardModal() {
+            document.getElementById('addCardModal').classList.add('hidden');
+        }
+
+        function viewFatura(cardId) {
+            alert(`Visualização da fatura do cartão ${cardId} seria implementada aqui`);
+        }
+
+        function viewFaturaDetails(faturaId) {
+            alert(`Visualização dos detalhes da fatura ${faturaId} seria implementada aqui`);
+        }
+
+        // Funções para investimentos
+        function updateInvestmentAccountsList() {
+            const investmentAccountsList = document.getElementById('investmentAccountsList');
+            
+            if (investmentAccounts.length === 0) {
+                investmentAccountsList.innerHTML = '<p class="text-gray-500 text-center py-8">Nenhuma conta de investimento encontrada.</p>';
+                return;
+            }
+            
+            investmentAccountsList.innerHTML = investmentAccounts.map(account => `
+                <div class="flex justify-between items-center p-3 border rounded-lg">
+                    <div>
+                        <p class="font-medium">${account.name}</p>
+                        <p class="text-sm text-gray-500">${account.institution} • Saldo: ${formatCurrency(account.balance)}</p>
+                    </div>
+                    <div class="flex items-center">
+                        <button onclick="editInvestmentAccount(${account.id})" class="text-blue-600 hover:text-blue-800 mr-2">Editar</button>
+                        <button onclick="deleteInvestmentAccount(${account.id})" class="text-red-600 hover:text-red-800">Excluir</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateInvestmentsList() {
+            const investmentsList = document.getElementById('investmentsList');
+            
+            if (investments.length === 0) {
+                investmentsList.innerHTML = '<p class="text-gray-500 text-center py-8">Nenhum investimento encontrado.</p>';
+                return;
+            }
+            
+            investmentsList.innerHTML = investments.map(investment => `
+                <div class="flex justify-between items-center p-3 border rounded-lg">
+                    <div>
+                        <p class="font-medium">${investment.name}</p>
+                        <p class="text-sm text-gray-500">${investment.type.toUpperCase()} • ${investment.institution}</p>
+                        <p class="text-sm text-gray-500">Valor Atual: ${formatCurrency(investment.currentValue)}</p>
+                    </div>
+                    <div class="flex items-center">
+                        <button onclick="viewInvestment(${investment.id})" class="text-blue-600 hover:text-blue-800 mr-2">Ver</button>
+                        <button onclick="editInvestment(${investment.id})" class="text-blue-600 hover:text-blue-800 mr-2">Editar</button>
+                        <button onclick="deleteInvestment(${investment.id})" class="text-red-600 hover:text-red-800">Excluir</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateGoalsList() {
+            const goalsList = document.getElementById('goalsList');
+            
+            if (goals.length === 0) {
+                goalsList.innerHTML = '<p class="text-gray-500 text-center py-8">Nenhuma meta encontrada.</p>';
+                return;
+            }
+            
+            goalsList.innerHTML = goals.map(goal => `
+                <div class="flex justify-between items-center p-3 border rounded-lg">
+                    <div>
+                        <p class="font-medium">${goal.name}</p>
+                        <p class="text-sm text-gray-500">Meta: ${formatCurrency(goal.targetValue)} • Atual: ${formatCurrency(goal.currentValue)}</p>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                            <div class="bg-blue-600 h-2.5 rounded-full" style="width: ${Math.min(100, (goal.currentValue / goal.targetValue) * 100)}%"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <button onclick="editGoal(${goal.id})" class="text-blue-600 hover:text-blue-800 mr-2">Editar</button>
+                        <button onclick="deleteGoal(${goal.id})" class="text-red-600 hover:text-red-800">Excluir</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAddInvestmentAccountModal() {
+            document.getElementById('addInvestmentAccountModal').classList.remove('hidden');
+        }
+
+        function closeAddInvestmentAccountModal() {
+            document.getElementById('addInvestmentAccountModal').classList.add('hidden');
+        }
+
+        function showAddInvestmentModal() {
+            alert('Modal de adicionar investimento seria implementado aqui');
+        }
+
+        function showAddGoalModal() {
+            alert('Modal de adicionar meta seria implementado aqui');
         }
 
         // Configurar event listeners
@@ -1186,198 +2165,140 @@
                     closeAddCategoryModal();
                 });
             }
-        }
 
-        // Funções para API Keys
-        function saveApiKeys() {
-            const openaiKey = document.getElementById('openaiKey').value;
-            const anthropicKey = document.getElementById('anthropicKey').value;
-            const geminiKey = document.getElementById('geminiKey').value;
-            
-            apiKeys = {
-                openai: openaiKey,
-                anthropic: anthropicKey,
-                gemini: geminiKey
-            };
-            
-            localStorage.setItem('financial-api-keys', JSON.stringify(apiKeys));
-            alert('Chaves API salvas com sucesso!');
-        }
-
-        function loadApiKeys() {
-            if (apiKeys.openai) document.getElementById('openaiKey').value = apiKeys.openai;
-            if (apiKeys.anthropic) document.getElementById('anthropicKey').value = apiKeys.anthropic;
-            if (apiKeys.gemini) document.getElementById('geminiKey').value = apiKeys.gemini;
-        }
-
-        // Funções para backup
-        function exportData() {
-            const data = {
-                transactions: transactions,
-                accounts: accounts,
-                investments: investments,
-                goals: goals,
-                recurrentTransactions: recurrentTransactions,
-                installments: installments,
-                processedDocuments: processedDocuments,
-                categories: categories
-            };
-            
-            const dataStr = JSON.stringify(data, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = 'finance-control-backup-' + new Date().toISOString().split('T')[0] + '.json';
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-        }
-
-        function importData() {
-            const fileInput = document.getElementById('importFile');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                alert('Por favor, selecione um arquivo para importar.');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
+            // Formulário de adicionar conta
+            const addAccountForm = document.getElementById('addAccountForm');
+            if (addAccountForm) {
+                addAccountForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
                     
-                    // Validar dados
-                    if (!data.transactions || !data.categories) {
-                        throw new Error('Formato de arquivo inválido.');
+                    const name = document.getElementById('accountName').value;
+                    const type = document.getElementById('accountType').value;
+                    const bank = document.getElementById('accountBank').value;
+                    const balance = parseFloat(document.getElementById('accountBalance').value);
+                    
+                    if (!name || !bank || isNaN(balance)) {
+                        alert('Por favor, preencha todos os campos.');
+                        return;
                     }
                     
-                    // Importar dados
-                    transactions = data.transactions || [];
-                    accounts = data.accounts || [];
-                    investments = data.investments || [];
-                    goals = data.goals || [];
-                    recurrentTransactions = data.recurrentTransactions || [];
-                    installments = data.installments || [];
-                    processedDocuments = data.processedDocuments || [];
+                    // Adicionar nova conta
+                    accounts.push({
+                        id: Date.now(),
+                        name: name,
+                        type: type,
+                        bank: bank,
+                        balance: balance
+                    });
                     
-                    // Atualizar categorias se existirem
-                    if (data.categories) {
-                        categories.despesas = data.categories.despesas || categories.despesas;
-                        categories.gastos = data.categories.gastos || categories.gastos;
-                        categories.investimentos = data.categories.investimentos || categories.investimentos;
-                        categories.receitas = data.categories.receitas || categories.receitas;
-                    }
-                    
-                    // Salvar no localStorage
-                    localStorage.setItem('financial-transactions', JSON.stringify(transactions));
+                    // Salvar contas no localStorage
                     localStorage.setItem('financial-accounts', JSON.stringify(accounts));
-                    localStorage.setItem('financial-investments', JSON.stringify(investments));
-                    localStorage.setItem('financial-goals', JSON.stringify(goals));
-                    localStorage.setItem('financial-recurrent', JSON.stringify(recurrentTransactions));
-                    localStorage.setItem('financial-installments', JSON.stringify(installments));
-                    localStorage.setItem('financial-processed', JSON.stringify(processedDocuments));
-                    localStorage.setItem('financial-categories', JSON.stringify(categories));
-                    
-                    alert('Dados importados com sucesso!');
                     
                     // Atualizar interface
-                    updateDashboard();
-                    loadCategories();
-                    
-                } catch (error) {
-                    alert('Erro ao importar dados: ' + error.message);
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        function selectBackupFolder() {
-            const folder = prompt('Digite o caminho da pasta para backup:', document.getElementById('backupFolder').value);
-            if (folder) {
-                document.getElementById('backupFolder').value = folder;
-                localStorage.setItem('financial-backup-folder', folder);
+                    updateAccountsList();
+                    closeAddAccountModal();
+                });
             }
-        }
 
-        // Estatísticas do sistema
-        function updateSystemStats() {
-            const statsContainer = document.getElementById('systemStats');
-            
-            const stats = [
-                { label: 'Transações', value: transactions.length },
-                { label: 'Contas', value: accounts.length },
-                { label: 'Investimentos', value: investments.length },
-                { label: 'Metas', value: goals.length },
-                { label: 'Categorias', value: categories.despesas.length + categories.gastos.length + categories.investimentos.length + categories.receitas.length },
-                { label: 'Processamentos', value: processedDocuments.length },
-                { label: 'Versão', value: '1.0.0' },
-                { label: 'Último backup', value: localStorage.getItem('financial-last-backup') || 'Nunca' }
-            ];
-            
-            statsContainer.innerHTML = stats.map(s => `
-                <div class="p-3 border rounded-lg">
-                    <p class="text-sm text-gray-600">${s.label}</p>
-                    <p class="text-lg font-semibold">${s.value}</p>
-                </div>
-            `).join('');
-        }
+            // Formulário de adicionar cartão
+            const addCardForm = document.getElementById('addCardForm');
+            if (addCardForm) {
+                addCardForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const name = document.getElementById('cardName').value;
+                    const bank = document.getElementById('cardBank').value;
+                    const flag = document.getElementById('cardFlag').value;
+                    const limit = parseFloat(document.getElementById('cardLimit').value);
+                    const dueDay = parseInt(document.getElementById('cardDueDay').value);
+                    const closingDay = parseInt(document.getElementById('cardClosingDay').value);
+                    
+                    if (!name || !bank || isNaN(limit) || isNaN(dueDay) || isNaN(closingDay)) {
+                        alert('Por favor, preencha todos os campos.');
+                        return;
+                    }
+                    
+                    // Adicionar novo cartão
+                    cards.push({
+                        id: Date.now(),
+                        name: name,
+                        bank: bank,
+                        flag: flag,
+                        limit: limit,
+                        dueDay: dueDay,
+                        closingDay: closingDay,
+                        usedLimit: 0
+                    });
+                    
+                    // Salvar cartões no localStorage
+                    localStorage.setItem('financial-cards', JSON.stringify(cards));
+                    
+                    // Atualizar interface
+                    updateCardsList();
+                    closeAddCardModal();
+                });
+            }
 
-        // Implementações de funções que antes eram placeholders
-        function showAddTransactionModal() {
-            alert('Adicionar nova transação: Esta funcionalidade está sendo implementada. Em breve estará disponível!');
-        }
-        
-        function showRecurrentModal() {
-            alert('Configurar gastos recorrentes: Esta funcionalidade está sendo implementada. Em breve estará disponível!');
-        }
-        
-        function showInstallmentModal() {
-            alert('Gerenciar parcelamentos: Esta funcionalidade está sendo implementada. Em breve estará disponível!');
-        }
-        
-        function showAddAccountModal() {
-            alert('Adicionar nova conta: Esta funcionalidade está sendo implementada. Em breve estará disponível!');
-        }
-        
-        function showAddInvestmentModal() {
-            alert('Adicionar novo investimento: Esta funcionalidade está sendo implementada. Em breve estará disponível!');
-        }
-        
-        function showAddGoalModal() {
-            alert('Adicionar nova meta: Esta funcionalidade está sendo implementada. Em breve estará disponível!');
-        }
-        
-        function updateTransactionsList() {
-            console.log('Atualizando lista de transações');
-            // Implementação futura
-        }
-        
-        function updateAccountsList() {
-            console.log('Atualizando lista de contas');
-            // Implementação futura
-        }
-        
-        function updateInvestmentsList() {
-            console.log('Atualizando lista de investimentos');
-            // Implementação futura
-        }
-        
-        function updateGoalsList() {
-            console.log('Atualizando lista de metas');
-            // Implementação futura
-        }
-        
-        function generateReport() {
-            console.log('Gerando relatório');
-            // Implementação futura
-        }
-        
-        function exportReport() {
-            console.log('Exportando relatório');
-            // Implementação futura
-        }
-    </script>
-</body>
-</html>
+            // Formulário de adicionar conta de investimento
+            const addInvestmentAccountForm = document.getElementById('addInvestmentAccountForm');
+            if (addInvestmentAccountForm) {
+                addInvestmentAccountForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const name = document.getElementById('investmentAccountName').value;
+                    const institution = document.getElementById('investmentAccountBank').value;
+                    const balance = parseFloat(document.getElementById('investmentAccountBalance').value);
+                    
+                    if (!name || !institution || isNaN(balance)) {
+                        alert('Por favor, preencha todos os campos.');
+                        return;
+                    }
+                    
+                    // Adicionar nova conta de investimento
+                    investmentAccounts.push({
+                        id: Date.now(),
+                        name: name,
+                        institution: institution,
+                        balance: balance
+                    });
+                    
+                    // Salvar contas de investimento no localStorage
+                    localStorage.setItem('financial-investment-accounts', JSON.stringify(investmentAccounts));
+                    
+                    // Atualizar interface
+                    updateInvestmentAccountsList();
+                    closeAddInvestmentAccountModal();
+                });
+            }
+
+            // Evento de mudança no tipo de investimento
+            const previewNovoInvestimentoTipo = document.getElementById('previewNovoInvestimentoTipo');
+            if (previewNovoInvestimentoTipo) {
+                previewNovoInvestimentoTipo.addEventListener('change', function() {
+                    const type = this.value;
+                    const subtipoContainer = document.getElementById('previewSubtipoContainer');
+                    const subtipoLabel = document.querySelector('#previewSubtipoContainer label');
+                    
+                    if (investmentTypes[type].hasSubtype) {
+                        subtipoContainer.classList.remove('hidden');
+                        subtipoLabel.textContent = investmentTypes[type].subtypeLabel;
+                    } else {
+                        subtipoContainer.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Evento de mudança no tipo de transação
+            const previewType = document.getElementById('previewType');
+            if (previewType) {
+                previewType.addEventListener('change', updatePreviewFields);
+            }
+
+            // Evento de mudança na forma de pagamento
+            const previewFormaPagamento = document.getElementById('previewFormaPagamento');
+            if (previewFormaPagamento) {
+                previewFormaPagamento.addEventListener('change', updateFormaPagamentoFields);
+            }
+
+            // Evento de mudança no tipo de investimento
+            const previewTipoInvestimento = document.getElementById('previewTi
