@@ -43,22 +43,35 @@ A aplicação está **100% funcional** e inclui:
 ### 💰 Controle Financeiro
 - **Gestão de Gastos**: Registro e categorização de despesas
 - **Controle de Receitas**: Acompanhamento de entradas financeiras
-- **Contas Bancárias**: Gerenciamento de múltiplas contas e cartões
+- **Categorias Personalizáveis**: Divisão em Despesas, Gastos e Investimentos
+- **Contas Bancárias**: Gerenciamento de contas correntes e poupanças
+- **Cartões de Crédito**: Controle de faturas, limites e vencimentos
+- **Parcelamentos**: Acompanhamento de compras parceladas
+- **Gastos Recorrentes**: Automação de despesas periódicas
 - **Relatórios**: Análises detalhadas e visualizações gráficas
 
-### 🤖 Processamento Inteligente
+### 🤖 Processamento Inteligente com Prévia
 - **Contracheques**: Extração automática de rubricas via IA
 - **Extratos Bancários**: Processamento de transações bancárias
 - **Extratos de Cartão**: Análise de faturas e parcelamentos
 - **SMS de Cartão**: Processamento de mensagens SMS de transações
 - **OCR para PIX**: Reconhecimento de comprovantes de transferências
 - **Documentos de Receitas**: Upload e processamento de comprovantes
+- **Documentos de Investimentos**: Processamento de aplicações e resgates
+- **Prévia de Transações**: Revisão completa antes de confirmar
+- **Edição Inteligente**: Correção de dados extraídos pela IA
+- **Análise Contextual**: Sugestões baseadas no histórico do usuário
 - **Múltiplos Provedores**: Suporte a OpenAI, Anthropic e Google Gemini
 
 ### 📊 Investimentos e Metas
-- **Carteira de Investimentos**: Controle de aplicações financeiras
+- **Carteira de Investimentos**: Controle detalhado de aplicações financeiras
+- **Tipos de Investimentos**: CDB, LCI, LCA, Ações, Criptomoedas, Fundos e mais
+- **Subcategorias Personalizáveis**: Detalhamento por tipo de investimento
+- **Aplicações e Resgates**: Controle de movimentações
 - **Metas Financeiras**: Sistema de objetivos e acompanhamento
 - **Rentabilidade**: Cálculos automáticos de performance
+- **Instituições Financeiras**: Cadastro e acompanhamento por instituição
+- **Taxas e Rendimentos**: Registro de taxas prometidas e realizadas
 
 ## 🏗️ Arquitetura
 
