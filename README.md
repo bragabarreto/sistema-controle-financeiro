@@ -30,7 +30,7 @@ A aplicação está **100% funcional** e inclui:
 - **Interface moderna**: Design responsivo com Tailwind CSS
 - **Dashboard interativo**: Gráficos dinâmicos e métricas em tempo real
 - **Processamento IA**: Análise de documentos via OpenAI, Anthropic e Google Gemini
-- **Categorização inteligente**: 14 categorias de gastos e 12 de receitas pré-definidas
+- **Categorização personalizada**: Categorias divididas em Despesas, Gastos e Investimentos, totalmente personalizáveis
 - **Contas bancárias**: Gerenciamento de múltiplas contas e cartões
 - **Investimentos**: Controle de aplicações e metas financeiras
 - **Parcelamentos**: Sistema completo de controle de parcelas
@@ -50,6 +50,9 @@ A aplicação está **100% funcional** e inclui:
 - **Contracheques**: Extração automática de rubricas via IA
 - **Extratos Bancários**: Processamento de transações bancárias
 - **Extratos de Cartão**: Análise de faturas e parcelamentos
+- **SMS de Cartão**: Processamento de mensagens SMS de transações
+- **OCR para PIX**: Reconhecimento de comprovantes de transferências
+- **Documentos de Receitas**: Upload e processamento de comprovantes
 - **Múltiplos Provedores**: Suporte a OpenAI, Anthropic e Google Gemini
 
 ### 📊 Investimentos e Metas
