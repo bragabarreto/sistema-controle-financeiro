@@ -235,6 +235,8 @@
                                         <option value="">Todos os tipos</option>
                                         <option value="receita">Receitas</option>
                                         <option value="gasto">Gastos</option>
+                                        <option value="despesa">Despesas</option>
+                                        <option value="investimento">Investimentos</option>
                                     </select>
                                 </div>
                             </div>
@@ -331,6 +333,73 @@
                         </div>
                     </div>
 
+                    <!-- Novos campos para processamento de IA -->
+                    <div class="bg-white rounded-lg shadow p-6 mb-8">
+                        <h3 class="text-lg font-semibold mb-4">Processamento de SMS e Documentos</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- SMS de Cartão -->
+                            <div class="border rounded-lg p-4">
+                                <h4 class="font-medium mb-3">📱 SMS de Cartão</h4>
+                                <p class="text-sm text-gray-600 mb-3">Cole o texto do SMS recebido do seu banco para processamento automático</p>
+                                <textarea id="smsText" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg" 
+                                    placeholder="Ex: Compra aprovada no cartão final 1234 de R$ 59,90 em MERCADO LIVRE em 10/09/2025"></textarea>
+                                <div class="mt-3">
+                                    <button onclick="processSMS()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                        Processar SMS
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- OCR para PIX/Transações -->
+                            <div class="border rounded-lg p-4">
+                                <h4 class="font-medium mb-3">📷 OCR para PIX/Transações</h4>
+                                <p class="text-sm text-gray-600 mb-3">Envie comprovantes de PIX ou transações para processamento</p>
+                                <div class="flex items-center justify-center w-full">
+                                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <svg class="w-8 h-8 mb-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                            </svg>
+                                            <p class="mb-1 text-sm text-gray-500">Clique para enviar</p>
+                                            <p class="text-xs text-gray-500">PNG, JPG ou PDF</p>
+                                        </div>
+                                        <input id="pixTransactionFile" type="file" class="hidden" accept=".png,.jpg,.jpeg,.pdf" onchange="processOCR('transaction')"/>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <!-- Documentos para Receitas/Investimentos -->
+                            <div class="border rounded-lg p-4">
+                                <h4 class="font-medium mb-3">📑 Documentos para Receitas/Investimentos</h4>
+                                <p class="text-sm text-gray-600 mb-3">Envie documentos relacionados a receitas ou investimentos</p>
+                                <div class="flex items-center justify-center w-full">
+                                    <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <svg class="w-8 h-8 mb-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                            </svg>
+                                            <p class="mb-1 text-sm text-gray-500">Clique para enviar</p>
+                                            <p class="text-xs text-gray-500">PNG, JPG ou PDF</p>
+                                        </div>
+                                        <input id="incomeInvestmentFile" type="file" class="hidden" accept=".png,.jpg,.jpeg,.pdf" onchange="processOCR('income')"/>
+                                    </label>
+                                </div>
+                                <div class="mt-3">
+                                    <select id="documentType" class="px-3 py-2 border rounded-lg">
+                                        <option value="income">Receita</option>
+                                        <option value="investment">Investimento</option>
+                                    </select>
+                                    <button onclick="processDocument()" class="ml-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                                        Processar Documento
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="bg-white rounded-lg shadow p-6">
                         <h3 class="text-lg font-semibold mb-4">Histórico de Processamentos</h3>
                         <div id="processamentosHistory" class="space-y-3">
@@ -417,7 +486,7 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Pasta de Backup</label>
                                     <div class="flex gap-2">
-                                        <input id="backupFolder" type="text" readonly class="flex-1 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" value="Downloads/FinanceControl/">
+                                        <input id="backupFolder" type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg" value="Downloads/FinanceControl/">
                                         <button onclick="selectBackupFolder()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
                                             📁 Selecionar
                                         </button>
@@ -429,16 +498,31 @@
                         <!-- Categorias -->
                         <div class="bg-white rounded-lg shadow p-6">
                             <h3 class="text-lg font-semibold mb-4">🏷️ Categorias</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
-                                    <h4 class="font-medium mb-3">Categorias de Gastos</h4>
+                                    <div class="flex justify-between items-center mb-3">
+                                        <h4 class="font-medium">Categorias de Despesas</h4>
+                                        <button onclick="showAddCategoryModal('despesas')" class="text-sm px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200">+ Adicionar</button>
+                                    </div>
+                                    <div id="despesasCategories" class="space-y-2">
+                                        <!-- Categorias serão carregadas aqui -->
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-center mb-3">
+                                        <h4 class="font-medium">Categorias de Gastos</h4>
+                                        <button onclick="showAddCategoryModal('gastos')" class="text-sm px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200">+ Adicionar</button>
+                                    </div>
                                     <div id="gastosCategories" class="space-y-2">
                                         <!-- Categorias serão carregadas aqui -->
                                     </div>
                                 </div>
                                 <div>
-                                    <h4 class="font-medium mb-3">Categorias de Receitas</h4>
-                                    <div id="receitasCategories" class="space-y-2">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <h4 class="font-medium">Categorias de Investimentos</h4>
+                                        <button onclick="showAddCategoryModal('investimentos')" class="text-sm px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200">+ Adicionar</button>
+                                    </div>
+                                    <div id="investimentosCategories" class="space-y-2">
                                         <!-- Categorias serão carregadas aqui -->
                                     </div>
                                 </div>
@@ -458,8 +542,96 @@
         </div>
     </div>
 
-    <!-- Modals serão adicionados aqui via JavaScript -->
-    <div id="modalsContainer"></div>
+    <!-- Modals -->
+    <div id="modalsContainer">
+        <!-- Modal de Adicionar Categoria -->
+        <div id="addCategoryModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal">
+            <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                <h3 class="text-lg font-semibold mb-4">Adicionar Nova Categoria</h3>
+                <form id="addCategoryForm" class="space-y-4">
+                    <input type="hidden" id="categoryType" value="gastos">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome da Categoria</label>
+                        <input id="categoryName" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="Ex: Alimentação">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Ícone</label>
+                        <div class="grid grid-cols-8 gap-2">
+                            <button type="button" onclick="selectIcon('🍽️')" class="p-2 border rounded-lg hover:bg-gray-100">🍽️</button>
+                            <button type="button" onclick="selectIcon('🚗')" class="p-2 border rounded-lg hover:bg-gray-100">🚗</button>
+                            <button type="button" onclick="selectIcon('🏠')" class="p-2 border rounded-lg hover:bg-gray-100">🏠</button>
+                            <button type="button" onclick="selectIcon('🏥')" class="p-2 border rounded-lg hover:bg-gray-100">🏥</button>
+                            <button type="button" onclick="selectIcon('📚')" class="p-2 border rounded-lg hover:bg-gray-100">📚</button>
+                            <button type="button" onclick="selectIcon('🎮')" class="p-2 border rounded-lg hover:bg-gray-100">🎮</button>
+                            <button type="button" onclick="selectIcon('👕')" class="p-2 border rounded-lg hover:bg-gray-100">👕</button>
+                            <button type="button" onclick="selectIcon('💄')" class="p-2 border rounded-lg hover:bg-gray-100">💄</button>
+                            <button type="button" onclick="selectIcon('🐕')" class="p-2 border rounded-lg hover:bg-gray-100">🐕</button>
+                            <button type="button" onclick="selectIcon('📋')" class="p-2 border rounded-lg hover:bg-gray-100">📋</button>
+                            <button type="button" onclick="selectIcon('🛡️')" class="p-2 border rounded-lg hover:bg-gray-100">🛡️</button>
+                            <button type="button" onclick="selectIcon('📈')" class="p-2 border rounded-lg hover:bg-gray-100">📈</button>
+                            <button type="button" onclick="selectIcon('❤️')" class="p-2 border rounded-lg hover:bg-gray-100">❤️</button>
+                            <button type="button" onclick="selectIcon('📦')" class="p-2 border rounded-lg hover:bg-gray-100">📦</button>
+                            <button type="button" onclick="selectIcon('💼')" class="p-2 border rounded-lg hover:bg-gray-100">💼</button>
+                            <button type="button" onclick="selectIcon('💻')" class="p-2 border rounded-lg hover:bg-gray-100">💻</button>
+                        </div>
+                        <input type="hidden" id="categoryIcon" value="📦">
+                        <div class="mt-2 text-center">
+                            <span id="selectedIcon" class="text-2xl">📦</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cor</label>
+                        <input id="categoryColor" type="color" class="w-full h-10 border border-gray-300 rounded-lg" value="#6b7280">
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeAddCategoryModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Adicionar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal de Upload -->
+        <div id="uploadModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal">
+            <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+                <h3 id="uploadModalTitle" class="text-lg font-semibold mb-4">Processar Documento</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-center w-full">
+                        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <svg class="w-8 h-8 mb-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                </svg>
+                                <p class="mb-1 text-sm text-gray-500">Clique para enviar</p>
+                                <p class="text-xs text-gray-500">PNG, JPG ou PDF</p>
+                            </div>
+                            <input id="uploadFile" type="file" class="hidden" accept=".png,.jpg,.jpeg,.pdf"/>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Provedor de IA</label>
+                        <select id="aiProvider" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="openai">OpenAI</option>
+                            <option value="anthropic">Anthropic</option>
+                            <option value="gemini">Google Gemini</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeUploadModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
+                            Cancelar
+                        </button>
+                        <button type="button" onclick="processUploadedFile()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            Processar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Dados globais
@@ -472,24 +644,36 @@
         let processedDocuments = JSON.parse(localStorage.getItem('financial-processed') || '[]');
         let apiKeys = JSON.parse(localStorage.getItem('financial-api-keys') || '{}');
         let isAuthenticated = localStorage.getItem('financial-auth') === 'true';
+        let currentUploadType = '';
 
         // Categorias pré-definidas
         const categories = {
+            despesas: [
+                { name: 'Aluguel', color: '#8b5cf6', icon: '🏠' },
+                { name: 'Condomínio', color: '#6366f1', icon: '🏢' },
+                { name: 'Água', color: '#0891b2', icon: '💧' },
+                { name: 'Luz', color: '#f59e0b', icon: '💡' },
+                { name: 'Internet', color: '#3b82f6', icon: '🌐' },
+                { name: 'Telefone', color: '#10b981', icon: '📱' },
+                { name: 'Impostos', color: '#64748b', icon: '📋' }
+            ],
             gastos: [
                 { name: 'Alimentação', color: '#ef4444', icon: '🍽️' },
                 { name: 'Transporte', color: '#3b82f6', icon: '🚗' },
-                { name: 'Moradia', color: '#8b5cf6', icon: '🏠' },
                 { name: 'Saúde', color: '#10b981', icon: '🏥' },
                 { name: 'Educação', color: '#f59e0b', icon: '📚' },
                 { name: 'Lazer', color: '#ec4899', icon: '🎮' },
                 { name: 'Roupas', color: '#6366f1', icon: '👕' },
                 { name: 'Beleza', color: '#84cc16', icon: '💄' },
                 { name: 'Pets', color: '#f97316', icon: '🐕' },
-                { name: 'Impostos', color: '#64748b', icon: '📋' },
-                { name: 'Seguros', color: '#0891b2', icon: '🛡️' },
-                { name: 'Investimentos', color: '#059669', icon: '📈' },
-                { name: 'Doações', color: '#dc2626', icon: '❤️' },
                 { name: 'Outros', color: '#6b7280', icon: '📦' }
+            ],
+            investimentos: [
+                { name: 'Ações', color: '#059669', icon: '📈' },
+                { name: 'Fundos', color: '#8b5cf6', icon: '💰' },
+                { name: 'Tesouro Direto', color: '#0891b2', icon: '🏛️' },
+                { name: 'Poupança', color: '#f59e0b', icon: '🏦' },
+                { name: 'Criptomoedas', color: '#f97316', icon: '₿' }
             ],
             receitas: [
                 { name: 'Salário', color: '#10b981', icon: '💼' },
@@ -498,11 +682,6 @@
                 { name: 'Aluguel', color: '#f59e0b', icon: '🏠' },
                 { name: 'Vendas', color: '#ef4444', icon: '🛒' },
                 { name: 'Prêmios', color: '#ec4899', icon: '🏆' },
-                { name: 'Restituição', color: '#6366f1', icon: '💰' },
-                { name: 'Pensão', color: '#84cc16', icon: '👨‍👩‍👧‍👦' },
-                { name: 'Benefícios', color: '#f97316', icon: '🎁' },
-                { name: 'Consultoria', color: '#0891b2', icon: '🤝' },
-                { name: 'Royalties', color: '#059669', icon: '📚' },
                 { name: 'Outros', color: '#6b7280', icon: '📦' }
             ]
         };
@@ -513,6 +692,7 @@
                 showMainApp();
             }
             loadCategories();
+            setupEventListeners();
         });
 
         // Autenticação
@@ -597,7 +777,7 @@
         // Dashboard
         function updateDashboard() {
             const receitas = transactions.filter(t => t.type === 'receita').reduce((sum, t) => sum + t.value, 0);
-            const gastos = transactions.filter(t => t.type === 'gasto').reduce((sum, t) => sum + t.value, 0);
+            const gastos = transactions.filter(t => t.type === 'gasto' || t.type === 'despesa').reduce((sum, t) => sum + t.value, 0);
             const saldo = receitas - gastos;
             const totalInvestimentos = investments.reduce((sum, i) => sum + i.currentValue, 0);
 
@@ -622,8 +802,8 @@
                                 <p class="text-sm text-gray-500">${t.category} • ${formatDate(t.date)}</p>
                             </div>
                         </div>
-                        <p class="font-semibold ${t.type === 'receita' ? 'text-green-600' : 'text-red-600'}">
-                            ${t.type === 'receita' ? '+' : '-'}${formatCurrency(Math.abs(t.value))}
+                        <p class="font-semibold ${t.type === 'receita' || t.type === 'investimento' ? 'text-green-600' : 'text-red-600'}">
+                            ${t.type === 'receita' || t.type === 'investimento' ? '+' : '-'}${formatCurrency(Math.abs(t.value))}
                         </p>
                     </div>
                 `).join('') :
@@ -637,7 +817,7 @@
             const gastosCtx = document.getElementById('gastosChart').getContext('2d');
             const gastosPorCategoria = {};
             
-            transactions.filter(t => t.type === 'gasto').forEach(t => {
+            transactions.filter(t => t.type === 'gasto' || t.type === 'despesa').forEach(t => {
                 gastosPorCategoria[t.category] = (gastosPorCategoria[t.category] || 0) + t.value;
             });
 
@@ -696,13 +876,13 @@
         }
 
         function getCategoryIcon(categoryName) {
-            const allCategories = [...categories.gastos, ...categories.receitas];
+            const allCategories = [...categories.gastos, ...categories.despesas, ...categories.investimentos, ...categories.receitas];
             const category = allCategories.find(c => c.name === categoryName);
             return category ? category.icon : '📦';
         }
 
         function getCategoryColor(categoryName) {
-            const allCategories = [...categories.gastos, ...categories.receitas];
+            const allCategories = [...categories.gastos, ...categories.despesas, ...categories.investimentos, ...categories.receitas];
             const category = allCategories.find(c => c.name === categoryName);
             return category ? category.color : '#6b7280';
         }
@@ -716,7 +896,11 @@
                 if (!months[month]) {
                     months[month] = { receitas: 0, gastos: 0 };
                 }
-                months[month][t.type === 'receita' ? 'receitas' : 'gastos'] += t.value;
+                if (t.type === 'receita' || t.type === 'investimento') {
+                    months[month].receitas += t.value;
+                } else {
+                    months[month].gastos += t.value;
+                }
             });
 
             Object.keys(months).sort().forEach(month => {
@@ -730,64 +914,470 @@
 
         // Carregar categorias
         function loadCategories() {
-            const gastosSelect = document.getElementById('filterCategory');
+            const filterCategory = document.getElementById('filterCategory');
             const gastosContainer = document.getElementById('gastosCategories');
+            const despesasContainer = document.getElementById('despesasCategories');
+            const investimentosContainer = document.getElementById('investimentosCategories');
             const receitasContainer = document.getElementById('receitasCategories');
 
-            if (gastosSelect) {
+            if (filterCategory) {
+                filterCategory.innerHTML = '<option value="">Todas as categorias</option>';
+                
+                categories.despesas.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.name;
+                    option.textContent = cat.name;
+                    filterCategory.appendChild(option);
+                });
+
                 categories.gastos.forEach(cat => {
                     const option = document.createElement('option');
                     option.value = cat.name;
                     option.textContent = cat.name;
-                    gastosSelect.appendChild(option);
+                    filterCategory.appendChild(option);
+                });
+
+                categories.investimentos.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.name;
+                    option.textContent = cat.name;
+                    filterCategory.appendChild(option);
                 });
 
                 categories.receitas.forEach(cat => {
                     const option = document.createElement('option');
                     option.value = cat.name;
                     option.textContent = cat.name;
-                    gastosSelect.appendChild(option);
+                    filterCategory.appendChild(option);
                 });
             }
 
             if (gastosContainer) {
                 gastosContainer.innerHTML = categories.gastos.map(cat => 
-                    `<div class="category-chip" style="background-color: ${cat.color}20; color: ${cat.color}; border: 1px solid ${cat.color}40;">
-                        ${cat.icon} ${cat.name}
+                    `<div class="category-chip flex justify-between items-center" style="background-color: ${cat.color}20; color: ${cat.color}; border: 1px solid ${cat.color}40;">
+                        <span>${cat.icon} ${cat.name}</span>
+                        <button onclick="editCategory('gastos', '${cat.name}')" class="ml-2 text-xs text-gray-500 hover:text-gray-700">✏️</button>
+                    </div>`
+                ).join('');
+            }
+
+            if (despesasContainer) {
+                despesasContainer.innerHTML = categories.despesas.map(cat => 
+                    `<div class="category-chip flex justify-between items-center" style="background-color: ${cat.color}20; color: ${cat.color}; border: 1px solid ${cat.color}40;">
+                        <span>${cat.icon} ${cat.name}</span>
+                        <button onclick="editCategory('despesas', '${cat.name}')" class="ml-2 text-xs text-gray-500 hover:text-gray-700">✏️</button>
+                    </div>`
+                ).join('');
+            }
+
+            if (investimentosContainer) {
+                investimentosContainer.innerHTML = categories.investimentos.map(cat => 
+                    `<div class="category-chip flex justify-between items-center" style="background-color: ${cat.color}20; color: ${cat.color}; border: 1px solid ${cat.color}40;">
+                        <span>${cat.icon} ${cat.name}</span>
+                        <button onclick="editCategory('investimentos', '${cat.name}')" class="ml-2 text-xs text-gray-500 hover:text-gray-700">✏️</button>
                     </div>`
                 ).join('');
             }
 
             if (receitasContainer) {
                 receitasContainer.innerHTML = categories.receitas.map(cat => 
-                    `<div class="category-chip" style="background-color: ${cat.color}20; color: ${cat.color}; border: 1px solid ${cat.color}40;">
-                        ${cat.icon} ${cat.name}
+                    `<div class="category-chip flex justify-between items-center" style="background-color: ${cat.color}20; color: ${cat.color}; border: 1px solid ${cat.color}40;">
+                        <span>${cat.icon} ${cat.name}</span>
+                        <button onclick="editCategory('receitas', '${cat.name}')" class="ml-2 text-xs text-gray-500 hover:text-gray-700">✏️</button>
                     </div>`
                 ).join('');
             }
         }
 
-        // Placeholder functions (implementação completa seria muito extensa)
-        function showAddTransactionModal() { alert('Modal de transação seria implementado aqui'); }
-        function showRecurrentModal() { alert('Modal de gastos recorrentes seria implementado aqui'); }
-        function showInstallmentModal() { alert('Modal de parcelamentos seria implementado aqui'); }
-        function showAddAccountModal() { alert('Modal de contas seria implementado aqui'); }
-        function showAddInvestmentModal() { alert('Modal de investimentos seria implementado aqui'); }
-        function showAddGoalModal() { alert('Modal de metas seria implementado aqui'); }
-        function showUploadModal(type) { alert(`Modal de upload ${type} seria implementado aqui`); }
-        function updateTransactionsList() { console.log('Atualizando lista de transações'); }
-        function updateAccountsList() { console.log('Atualizando lista de contas'); }
-        function updateInvestmentsList() { console.log('Atualizando lista de investimentos'); }
-        function updateGoalsList() { console.log('Atualizando lista de metas'); }
-        function updateProcessingHistory() { console.log('Atualizando histórico de processamentos'); }
-        function generateReport() { console.log('Gerando relatório'); }
-        function exportReport() { console.log('Exportando relatório'); }
-        function saveApiKeys() { console.log('Salvando chaves API'); }
-        function loadApiKeys() { console.log('Carregando chaves API'); }
-        function exportData() { console.log('Exportando dados'); }
-        function importData() { console.log('Importando dados'); }
-        function selectBackupFolder() { console.log('Selecionando pasta de backup'); }
-        function updateSystemStats() { console.log('Atualizando estatísticas do sistema'); }
+        // Funções para categorias
+        function showAddCategoryModal(type) {
+            document.getElementById('categoryType').value = type;
+            document.getElementById('addCategoryModal').classList.remove('hidden');
+        }
+
+        function closeAddCategoryModal() {
+            document.getElementById('addCategoryModal').classList.add('hidden');
+        }
+
+        function selectIcon(icon) {
+            document.getElementById('categoryIcon').value = icon;
+            document.getElementById('selectedIcon').textContent = icon;
+        }
+
+        function editCategory(type, name) {
+            alert(`Edição da categoria ${name} do tipo ${type} seria implementada aqui`);
+        }
+
+        // Funções para processamento de IA
+        function showUploadModal(type) {
+            currentUploadType = type;
+            document.getElementById('uploadModalTitle').textContent = `Processar ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            document.getElementById('uploadModal').classList.remove('hidden');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.add('hidden');
+        }
+
+        function processUploadedFile() {
+            const file = document.getElementById('uploadFile').files[0];
+            const provider = document.getElementById('aiProvider').value;
+            
+            if (!file) {
+                alert('Por favor, selecione um arquivo para processar.');
+                return;
+            }
+            
+            // Simulação de processamento
+            alert(`Processando ${currentUploadType} com o provedor ${provider}. Arquivo: ${file.name}`);
+            
+            // Adicionar ao histórico de processamentos
+            const newProcessing = {
+                id: Date.now(),
+                type: currentUploadType,
+                provider: provider,
+                filename: file.name,
+                date: new Date().toISOString().split('T')[0],
+                status: 'Concluído'
+            };
+            
+            processedDocuments.push(newProcessing);
+            localStorage.setItem('financial-processed', JSON.stringify(processedDocuments));
+            
+            closeUploadModal();
+            updateProcessingHistory();
+        }
+
+        function processSMS() {
+            const smsText = document.getElementById('smsText').value;
+            
+            if (!smsText) {
+                alert('Por favor, insira o texto do SMS.');
+                return;
+            }
+            
+            // Simulação de processamento
+            alert(`Processando SMS: ${smsText}`);
+            
+            // Adicionar ao histórico de processamentos
+            const newProcessing = {
+                id: Date.now(),
+                type: 'sms',
+                provider: 'openai',
+                filename: 'SMS de Cartão',
+                date: new Date().toISOString().split('T')[0],
+                status: 'Concluído'
+            };
+            
+            processedDocuments.push(newProcessing);
+            localStorage.setItem('financial-processed', JSON.stringify(processedDocuments));
+            
+            document.getElementById('smsText').value = '';
+            updateProcessingHistory();
+        }
+
+        function processOCR(type) {
+            const fileInput = type === 'transaction' ? 'pixTransactionFile' : 'incomeInvestmentFile';
+            const file = document.getElementById(fileInput).files[0];
+            
+            if (!file) {
+                alert('Por favor, selecione um arquivo para processar.');
+                return;
+            }
+            
+            // Simulação de processamento
+            alert(`Processando OCR para ${type}. Arquivo: ${file.name}`);
+            
+            // Adicionar ao histórico de processamentos
+            const newProcessing = {
+                id: Date.now(),
+                type: type === 'transaction' ? 'pix/transação' : 'receita/investimento',
+                provider: 'openai',
+                filename: file.name,
+                date: new Date().toISOString().split('T')[0],
+                status: 'Concluído'
+            };
+            
+            processedDocuments.push(newProcessing);
+            localStorage.setItem('financial-processed', JSON.stringify(processedDocuments));
+            
+            document.getElementById(fileInput).value = '';
+            updateProcessingHistory();
+        }
+
+        function processDocument() {
+            const file = document.getElementById('incomeInvestmentFile').files[0];
+            const type = document.getElementById('documentType').value;
+            
+            if (!file) {
+                alert('Por favor, selecione um documento para processar.');
+                return;
+            }
+            
+            // Simulação de processamento
+            alert(`Processando documento de ${type}. Arquivo: ${file.name}`);
+            
+            // Adicionar ao histórico de processamentos
+            const newProcessing = {
+                id: Date.now(),
+                type: type,
+                provider: 'openai',
+                filename: file.name,
+                date: new Date().toISOString().split('T')[0],
+                status: 'Concluído'
+            };
+            
+            processedDocuments.push(newProcessing);
+            localStorage.setItem('financial-processed', JSON.stringify(processedDocuments));
+            
+            document.getElementById('incomeInvestmentFile').value = '';
+            updateProcessingHistory();
+        }
+
+        function updateProcessingHistory() {
+            const historyContainer = document.getElementById('processamentosHistory');
+            
+            if (processedDocuments.length === 0) {
+                historyContainer.innerHTML = '<p class="text-gray-500 text-center py-8">Nenhum processamento realizado.</p>';
+                return;
+            }
+            
+            historyContainer.innerHTML = processedDocuments.map(p => `
+                <div class="flex justify-between items-center p-3 border rounded-lg">
+                    <div>
+                        <p class="font-medium">${p.type.charAt(0).toUpperCase() + p.type.slice(1)}: ${p.filename}</p>
+                        <p class="text-sm text-gray-500">Provedor: ${p.provider} • ${formatDate(p.date)}</p>
+                    </div>
+                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">${p.status}</span>
+                </div>
+            `).join('');
+        }
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Formulário de adicionar categoria
+            const addCategoryForm = document.getElementById('addCategoryForm');
+            if (addCategoryForm) {
+                addCategoryForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const type = document.getElementById('categoryType').value;
+                    const name = document.getElementById('categoryName').value;
+                    const icon = document.getElementById('categoryIcon').value;
+                    const color = document.getElementById('categoryColor').value;
+                    
+                    if (!name) {
+                        alert('Por favor, insira um nome para a categoria.');
+                        return;
+                    }
+                    
+                    // Adicionar nova categoria
+                    categories[type].push({
+                        name: name,
+                        icon: icon,
+                        color: color
+                    });
+                    
+                    // Salvar categorias no localStorage
+                    localStorage.setItem('financial-categories', JSON.stringify(categories));
+                    
+                    // Atualizar interface
+                    loadCategories();
+                    closeAddCategoryModal();
+                });
+            }
+        }
+
+        // Funções para API Keys
+        function saveApiKeys() {
+            const openaiKey = document.getElementById('openaiKey').value;
+            const anthropicKey = document.getElementById('anthropicKey').value;
+            const geminiKey = document.getElementById('geminiKey').value;
+            
+            apiKeys = {
+                openai: openaiKey,
+                anthropic: anthropicKey,
+                gemini: geminiKey
+            };
+            
+            localStorage.setItem('financial-api-keys', JSON.stringify(apiKeys));
+            alert('Chaves API salvas com sucesso!');
+        }
+
+        function loadApiKeys() {
+            if (apiKeys.openai) document.getElementById('openaiKey').value = apiKeys.openai;
+            if (apiKeys.anthropic) document.getElementById('anthropicKey').value = apiKeys.anthropic;
+            if (apiKeys.gemini) document.getElementById('geminiKey').value = apiKeys.gemini;
+        }
+
+        // Funções para backup
+        function exportData() {
+            const data = {
+                transactions: transactions,
+                accounts: accounts,
+                investments: investments,
+                goals: goals,
+                recurrentTransactions: recurrentTransactions,
+                installments: installments,
+                processedDocuments: processedDocuments,
+                categories: categories
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'finance-control-backup-' + new Date().toISOString().split('T')[0] + '.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function importData() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Por favor, selecione um arquivo para importar.');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Validar dados
+                    if (!data.transactions || !data.categories) {
+                        throw new Error('Formato de arquivo inválido.');
+                    }
+                    
+                    // Importar dados
+                    transactions = data.transactions || [];
+                    accounts = data.accounts || [];
+                    investments = data.investments || [];
+                    goals = data.goals || [];
+                    recurrentTransactions = data.recurrentTransactions || [];
+                    installments = data.installments || [];
+                    processedDocuments = data.processedDocuments || [];
+                    
+                    // Atualizar categorias se existirem
+                    if (data.categories) {
+                        categories.despesas = data.categories.despesas || categories.despesas;
+                        categories.gastos = data.categories.gastos || categories.gastos;
+                        categories.investimentos = data.categories.investimentos || categories.investimentos;
+                        categories.receitas = data.categories.receitas || categories.receitas;
+                    }
+                    
+                    // Salvar no localStorage
+                    localStorage.setItem('financial-transactions', JSON.stringify(transactions));
+                    localStorage.setItem('financial-accounts', JSON.stringify(accounts));
+                    localStorage.setItem('financial-investments', JSON.stringify(investments));
+                    localStorage.setItem('financial-goals', JSON.stringify(goals));
+                    localStorage.setItem('financial-recurrent', JSON.stringify(recurrentTransactions));
+                    localStorage.setItem('financial-installments', JSON.stringify(installments));
+                    localStorage.setItem('financial-processed', JSON.stringify(processedDocuments));
+                    localStorage.setItem('financial-categories', JSON.stringify(categories));
+                    
+                    alert('Dados importados com sucesso!');
+                    
+                    // Atualizar interface
+                    updateDashboard();
+                    loadCategories();
+                    
+                } catch (error) {
+                    alert('Erro ao importar dados: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function selectBackupFolder() {
+            const folder = prompt('Digite o caminho da pasta para backup:', document.getElementById('backupFolder').value);
+            if (folder) {
+                document.getElementById('backupFolder').value = folder;
+                localStorage.setItem('financial-backup-folder', folder);
+            }
+        }
+
+        // Estatísticas do sistema
+        function updateSystemStats() {
+            const statsContainer = document.getElementById('systemStats');
+            
+            const stats = [
+                { label: 'Transações', value: transactions.length },
+                { label: 'Contas', value: accounts.length },
+                { label: 'Investimentos', value: investments.length },
+                { label: 'Metas', value: goals.length },
+                { label: 'Categorias', value: categories.despesas.length + categories.gastos.length + categories.investimentos.length + categories.receitas.length },
+                { label: 'Processamentos', value: processedDocuments.length },
+                { label: 'Versão', value: '1.0.0' },
+                { label: 'Último backup', value: localStorage.getItem('financial-last-backup') || 'Nunca' }
+            ];
+            
+            statsContainer.innerHTML = stats.map(s => `
+                <div class="p-3 border rounded-lg">
+                    <p class="text-sm text-gray-600">${s.label}</p>
+                    <p class="text-lg font-semibold">${s.value}</p>
+                </div>
+            `).join('');
+        }
+
+        // Implementações de funções que antes eram placeholders
+        function showAddTransactionModal() {
+            alert('Adicionar nova transação: Esta funcionalidade está sendo implementada. Em breve estará disponível!');
+        }
+        
+        function showRecurrentModal() {
+            alert('Configurar gastos recorrentes: Esta funcionalidade está sendo implementada. Em breve estará disponível!');
+        }
+        
+        function showInstallmentModal() {
+            alert('Gerenciar parcelamentos: Esta funcionalidade está sendo implementada. Em breve estará disponível!');
+        }
+        
+        function showAddAccountModal() {
+            alert('Adicionar nova conta: Esta funcionalidade está sendo implementada. Em breve estará disponível!');
+        }
+        
+        function showAddInvestmentModal() {
+            alert('Adicionar novo investimento: Esta funcionalidade está sendo implementada. Em breve estará disponível!');
+        }
+        
+        function showAddGoalModal() {
+            alert('Adicionar nova meta: Esta funcionalidade está sendo implementada. Em breve estará disponível!');
+        }
+        
+        function updateTransactionsList() {
+            console.log('Atualizando lista de transações');
+            // Implementação futura
+        }
+        
+        function updateAccountsList() {
+            console.log('Atualizando lista de contas');
+            // Implementação futura
+        }
+        
+        function updateInvestmentsList() {
+            console.log('Atualizando lista de investimentos');
+            // Implementação futura
+        }
+        
+        function updateGoalsList() {
+            console.log('Atualizando lista de metas');
+            // Implementação futura
+        }
+        
+        function generateReport() {
+            console.log('Gerando relatório');
+            // Implementação futura
+        }
+        
+        function exportReport() {
+            console.log('Exportando relatório');
+            // Implementação futura
+        }
     </script>
 </body>
 </html>
